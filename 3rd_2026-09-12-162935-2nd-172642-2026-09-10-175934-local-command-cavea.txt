@@ -1,0 +1,1357 @@
+ ▐▛███▛█   Claude Code v2.1.268
+▝▜██████▀  Opus 5 · Claude Pro
+  ▝▝ ▝▝    ~\Desktop\SI DASHBOaRD\client
+
+  ⎿  SessionStart:startup hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+❯ @2nd-172642-2026-09-10-175934-local-command-caveatcaveat-the.txt understad    
+  all context of it peoperly and and i want that there should be the QR for the 
+  inventory material in which when someone scan the QR from the phone and all   
+  the inventory material list open and from there thay can issue and return the 
+  issued material after SCAN there will be no login ask fro the user they just  
+  select the mateial wheich material and how much quantity they need and at     
+  what date they will return that all material and what is the name of that     
+  person or acro name , departement , and email, as an optional, i want as      
+  simple as the from will that any one can easly fill the form and the take the 
+  material and all these detail will be shown to the admin dashboard in simple  
+  not in complex UI formate undertsante it and start working on it              
+
+● I'll start by reading that context file to understand the existing system.
+
+  Read 9 files, listed 1 directory, ran 2 shell commands (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (15 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● I have the architecture. Let me pull the remaining pieces I need while
+  confirming two design decisions with you.
+
+  Read 9 files, ran 1 shell command (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● User answered Claude's questions:
+  ⎿  · When someone scans the QR and submits the form, should the stock be 
+     deducted straight away, or should it wait for an admin to approve? → Deduct
+     immediately (Recommended)
+     · How should a person return material after scanning — with no login? → 
+     Look up by name or email (Recommended)
+     · What QR codes do you want generated? → One QR for the whole store 
+     (Recommended)
+
+● Before writing code, here's what I still need: the seedModules() block (to pin
+  a sidebar entry), Icon.jsx (valid icon names), vite.config.js (proxy setup),
+  Master.js (departments), the theme's CSS variables, MetaContext.jsx, and a QR
+  library installed. All independent — fetching together.
+
+  Read 5 files, ran 2 shell commands (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● qr icon already exists in the icon set — good. Batching the last reads I need.
+
+  Read 2 files, ran 2 shell commands (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Background command "Install QR code library in client" completed (exit code 0)
+
+● Everything's loaded and qrcode installed. Now building. Starting with the
+  server side.
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\models\Transaction.js)
+  ⎿  Added 3 lines
+      59      status: { type: String, enum: TXN_STATUSES, default: 'Compl
+          eted', index: true },
+      60      returnable: { type: Boolean, default: false },
+      61  
+      62 +    // Recorded by someone who scanned the store QR code, with 
+         +no sign-in.                                                    
+      63 +    selfService: { type: Boolean, default: false, index: true }
+         +,                                                              
+      64 +                                                               
+      65      // Only meaningful for type ADJUST: whether the correction 
+          adds or removes stock.
+      66      direction: { type: String, enum: ['IN', 'OUT'], default: 'I
+          N' },
+      67  
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● qrcode is in. Now the server side — four independent changes plus the client
+  API helper, all batched.
+
+● Write(~\Desktop\SI DASHBOaRD\server\src\routes\public.routes.js)
+  ⎿  Wrote 359 lines to ..\server\src\routes\public.routes.js
+       1 import express from 'express';
+       2 import mongoose from 'mongoose';
+       3 import Item from '../models/Item.js';
+       4 import Transaction from '../models/Transaction.js';
+       5 import Master from '../models/Master.js';
+       7 import { ApiError, asyncHandler, logActivity, nextSequence } fro
+         m '../utils/helpers.js';
+       8 import { renderEmail, sendMail } from '../utils/mailer.js';
+       9 
+      10 /**
+     … +428 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Write hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\server.js)
+  ⎿  Added 1 line
+      18  import moduleRoutes from './routes/module.routes.js';
+      19  import userRoutes from './routes/user.routes.js';
+      20  import dashboardRoutes from './routes/dashboard.routes.js';
+      21 +import publicRoutes from './routes/public.routes.js';          
+      22  
+      23  const app = express();
+      24  const PORT = Number(process.env.PORT) || 5000;
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\server.js)
+  ⎿  Added 12 lines
+      48    rateLimit({ windowMs: 60 * 60 * 1000, limit: 10, standardHead
+          ers: true, legacyHeaders: false })
+      49  );
+      50  
+      51 +// The QR self-service counter takes no sign-in, so it gets its
+         + own throttle.                                                 
+      52 +app.use(                                                       
+      53 +  '/api/public',                                               
+      54 +  rateLimit({                                                  
+      55 +    windowMs: 10 * 60 * 1000,                                  
+      56 +    limit: 120,                                                
+      57 +    standardHeaders: true,                                     
+      58 +    legacyHeaders: false,                                      
+      59 +    message: { success: false, message: 'Too many requests from
+         + this phone. Please wait a minute and try again.' },           
+      60 +  })                                                           
+      61 +);                                                             
+      62 +                                                               
+      63  app.get('/api/health', (_req, res) =>
+      64    res.json({ success: true, service: 'SI Inventory API', time: 
+          new Date().toISOString() })
+      65  );
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (15 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\server.js)
+  ⎿  Added 1 line
+      75  app.use('/api/modules', moduleRoutes);
+      76  app.use('/api/users', userRoutes);
+      77  app.use('/api/dashboard', dashboardRoutes);
+      78 +app.use('/api/public', publicRoutes);                          
+      79  
+      80  app.use(notFound);
+      81  app.use(errorHandler);
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (18 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+● Update(~\Desktop\SI DASHBOaRD\server\src\realtime.js)
+  ⎿  Added 7 lines
+      47      return { entity: 'users', action: sub === '/register' ? 'cr
+          eated' : 'updated' };
+      48    }
+      49  
+      50 +  // A QR self-service issue or return moves both stock and mov
+         +ement history, and                                             
+      51 +  // nobody is signed in behind it — refresh every open screen.
+      52 +  if (route === 'public') {                                    
+      53 +    if (!['issue', 'return'].includes(rest.at(-1))) return null
+         +;                                                              
+      54 +    return { entity: '*', action: 'recorded', selfService: true
+         + };                                                            
+      55 +  }                                                            
+      56 +                                                               
+      57    const entity = ENTITY_BY_ROUTE[route];
+      58    if (!entity) return null;
+      59    if (entity === 'transactions' && rest.at(-1) === 'remind') re
+          turn null; // just an email
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (21 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\seed.js)
+  ⎿  Added 6 lines, removed 5 lines
+      77    { key: 'inventory', label: 'Inventory List', icon: 'box', pat
+          h: '/inventory', order: 2, isCore: true, description: 'Every ma
+          terial with full details.' },
+      78    { key: 'transactions', label: 'Issue / Receive', icon: 'excha
+          nge', path: '/transactions', order: 3, isCore: true, descriptio
+          n: 'Record and trace every update.' },
+      79    { key: 'returns', label: 'Pending Returns', icon: 'undo', pat
+          h: '/returns', order: 4, description: 'Who is holding what, and
+           what is overdue.' },
+      80 -  { key: 'reports', label: 'Reports', icon: 'list', path: '/rep
+         -orts', order: 5, description: 'Movement log, department usage, 
+         -exports.' },                                                   
+      81 -  { key: 'masters', label: 'Master Lists', icon: 'layers', path
+         -: '/masters', order: 6, description: 'Categories, locations, de
+         -partments, vendors, units.' },                                 
+      82 -  { key: 'fields', label: 'Custom Fields', icon: 'sliders', pat
+         -h: '/fields', order: 7, description: 'Add or remove any materia
+         -l attribute.' },                                               
+      83 -  { key: 'users', label: 'Users & Roles', icon: 'users', path: 
+         -'/users', order: 8, roles: ['admin', 'manager'], description: '
+         -Team access and the audit trail.' },                           
+      84 -  { key: 'settings', label: 'Settings', icon: 'gear', path: '/s
+         -ettings', order: 9, description: 'Profile, password and module 
+         -switches.' },                                                  
+      80 +  { key: 'selfservice', label: 'QR Self-Service', icon: 'qr', p
+         +ath: '/self-service', order: 5, description: 'The store QR code
+         +, and what people took by scanning it. Switch this off to close
+         + the counter.' },                                              
+      81 +  { key: 'reports', label: 'Reports', icon: 'list', path: '/rep
+         +orts', order: 6, description: 'Movement log, department usage, 
+         +exports.' },                                                   
+      82 +  { key: 'masters', label: 'Master Lists', icon: 'layers', path
+         +: '/masters', order: 7, description: 'Categories, locations, de
+         +partments, vendors, units.' },                                 
+      83 +  { key: 'fields', label: 'Custom Fields', icon: 'sliders', pat
+         +h: '/fields', order: 8, description: 'Add or remove any materia
+         +l attribute.' },                                               
+      84 +  { key: 'users', label: 'Users & Roles', icon: 'users', path: 
+         +'/users', order: 9, roles: ['admin', 'manager'], description: '
+         +Team access and the audit trail.' },                           
+      85 +  { key: 'settings', label: 'Settings', icon: 'gear', path: '/s
+         +ettings', order: 10, description: 'Profile, password and module
+         + switches.' },                                                 
+      86  ];
+      87  
+      88  /** The old "coming soon" placeholders — removed from existing 
+          databases on seed. */
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (24 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Write(src\api\publicClient.js)
+  ⎿  Wrote 25 lines to src\api\publicClient.js
+       1 import axios from 'axios';
+       2 
+       4  * A bare axios instance for the QR self-service screens. Delibe
+         rately separate
+       5  * from `api/client.js`: it sends no token, and a 401 here must 
+       6  * visitor to the login page — nobody scanning the store QR code
+          has an account.
+       7  */
+       9   baseURL: '/api/public',
+      10   headers: { 'Content-Type': 'application/json' },
+     … +19 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Write hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (27 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Server's done. Now the client — six independent pieces, batched together.
+
+● Write(src\pages\Scan.jsx)
+  ⎿  Wrote 638 lines to src\pages\Scan.jsx
+       1 import { useCallback, useEffect, useMemo, useState } from 'react
+       2 import publicApi from '../api/publicClient.js';
+       3 import Icon from '../components/Icon.jsx';
+       5 /**
+       6  * The screen that opens when somebody scans the store QR code o
+       7  *
+       8  * No sign-in, no account, no jargon: pick what you are taking, 
+       9  * and when it comes back, done. The same page also takes return
+         s, looked up by
+         use it is read
+     … +703 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Write hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Write(src\pages\SelfService.jsx)
+  ⎿  Wrote 261 lines to src\pages\SelfService.jsx
+       1 import { useCallback, useEffect, useMemo, useState } from 'react
+         ';
+       3 import api from '../api/client.js';
+       4 import Icon from '../components/Icon.jsx';
+       5 import { Badge, Empty, Loading, StatCard, fmtDate, fmtDateTime, 
+       6 import { useToast } from '../context/ToastContext.jsx';
+       7 import { useLiveUpdates } from '../context/SocketContext.jsx';
+       8 
+      10  * The admin side of the QR counter: the code to print and stick
+          on the store
+     … +304 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Write hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(src\App.jsx)
+  ⎿  Added 2 lines
+      15  import Fields from './pages/Fields.jsx';
+      16  import Users from './pages/Users.jsx';
+      17  import Settings from './pages/Settings.jsx';
+      18 +import Scan from './pages/Scan.jsx';                           
+      19 +import SelfService from './pages/SelfService.jsx';             
+      20  
+      21  function Protected({ children }) {
+      22    const { user, booting } = useAuth();
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(src\App.jsx)
+  ⎿  Added 3 lines
+      40        <Route path="/login" element={user ? <Navigate to="/" rep
+          lace /> : <Login />} />
+      41        <Route path="/reset-password/:token" element={<ResetPassw
+          ord />} />
+      42  
+      43 +      {/* The QR self-service counter: open to anyone who scans
+         +, signed in or not. */}                                        
+      44 +      <Route path="/scan" element={<Scan />} />                
+      45 +                                                               
+      46        <Route
+      47          element={
+      48            <Protected>
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (15 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(src\App.jsx)
+  ⎿  Added 1 line
+      55          <Route path="/inventory/:id" element={<ItemDetail />} /
+          >
+      56          <Route path="/transactions" element={<Transactions />} 
+          />
+      57          <Route path="/returns" element={<Returns />} />
+      58 +        <Route path="/self-service" element={<SelfService />} /
+         +>                                                              
+      59          <Route path="/reports" element={<Reports />} />
+      60          <Route path="/masters" element={<Masters />} />
+      61          <Route
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (18 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(src\components\Layout.jsx)
+  ⎿  Added 1 line
+      12    '/inventory': ['Inventory List', 'Every material held by Syst
+          em Integration'],
+      13    '/transactions': ['Issue & Receive', 'Record and trace every 
+          update'],
+      14    '/returns': ['Pending Returns', 'Material issued out and not 
+          yet returned'],
+      15 +  '/self-service': ['QR Self-Service', 'The store QR code, and 
+         +what people took by scanning it'],                             
+      16    '/reports': ['Reports', 'Movement log, department usage and e
+          xports'],
+      17    '/masters': ['Master Lists', 'Categories, locations, departme
+          nts, vendors and units'],
+      18    '/fields': ['Custom Fields', 'Add or remove any material attr
+          ibute'],
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (21 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(src\context\SocketContext.jsx)
+  ⎿  Added 2 lines
+      13    fields: 'a custom field',
+      14    modules: 'a sidebar module',
+      15    users: 'a user account',
+      16 +  // Nobody is signed in behind a QR scan, so it arrives as a w
+         +hole-app refresh.                                              
+      17 +  '*': 'material at the QR counter',                           
+      18  };
+      19  
+      20  const describe = (c) => `${c.by?.name || 'Someone'} ${c.action}
+           ${LABELS[c.entity] || 'something'}.`;
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (24 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\server\src\routes\transaction.routes.js)
+  ⎿  Added 1 line
+      16    const filter = {};
+      17  
+      18    if (q.type) filter.type = { $in: String(q.type).split(',') };
+      19 +  if (q.selfService === 'true') filter.selfService = true;     
+      20    if (q.status) filter.status = { $in: String(q.status).split('
+          ,') };
+      21    if (q.item && mongoose.isValidObjectId(q.item)) filter.item =
+           q.item;
+      22    if (q.project) filter.project = q.project;
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (27 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● CSS and docs are the last independent pieces — batching them, then I'll verify
+  the build.
+
+● Update(src\styles\theme.css)
+  ⎿  Added 712 lines
+      1481      break-inside: avoid;
+      1482    }
+      1483  }
+      1484 +                                                             
+      1485 +/* ========================================================= 
+      1486 +   QR self-service — the admin poster card                   
+      1487 +   ========================================================= 
+           +*/                                                           
+      1488 +                                                             
+      1489 +.qr-print-area {                                             
+      1490 +  text-align: center;                                        
+      1491 +}                                                            
+      1492 +                                                             
+      1493 +.qr-frame {                                                  
+      1494 +  display: inline-block;                                     
+      1495 +  padding: 14px;                                             
+      1496 +  background: var(--white);                                  
+      1497 +  border: 3px solid var(--navy-800);                         
+      1498 +  border-radius: var(--radius-lg);                           
+      1499 +}                                                            
+      1500 +                                                             
+      1501 +.qr-frame img {                                              
+      1502 +  display: block;                                            
+      1503 +  width: 230px;                                              
+      1504 +  height: 230px;                                             
+      1505 +}                                                            
+      1506 +                                                             
+      1507 +.qr-placeholder {                                            
+      1508 +  width: 230px;                                              
+      1509 +  height: 230px;                                             
+      1510 +  display: grid;                                             
+      1511 +  place-items: center;                                       
+      1512 +  color: var(--grey-400);                                    
+      1513 +  font-size: 13px;                                           
+      1514 +}                                                            
+      1515 +                                                             
+      1516 +.qr-title {                                                  
+      1517 +  margin: 16px 0 10px;                                       
+      1518 +  font-size: 14px;                                           
+      1519 +  font-weight: 800;                                          
+      1520 +  letter-spacing: 0.06em;                                    
+      1521 +  color: var(--navy-800);                                    
+      1522 +}                                                            
+      1523 +                                                             
+      1524 +.qr-steps {                                                  
+      1525 +  max-width: 380px;                                          
+      1526 +  margin: 0 auto;                                            
+      1527 +  padding-left: 18px;                                        
+      1528 +  text-align: left;                                          
+      1529 +  font-size: 13px;                                           
+      1530 +  line-height: 1.85;                                         
+      1531 +  color: var(--grey-600);                                    
+      1532 +}                                                            
+      1533 +                                                             
+      1534 +.qr-url {                                                    
+      1535 +  margin-top: 12px;                                          
+      1536 +  font-size: 12px;                                           
+      1537 +  font-family: ui-monospace, 'Cascadia Code', Consolas, monos
+           +pace;                                                        
+      1538 +  color: var(--grey-500);                                    
+      1539 +  word-break: break-all;                                     
+      1540 +}                                                            
+      1541 +                                                             
+      1542 +.qr-explain {                                                
+      1543 +  list-style: none;                                          
+      1544 +  display: grid;                                             
+      1545 +  gap: 12px;                                                 
+      1546 +  font-size: 13px;                                           
+      1547 +  line-height: 1.7;                                          
+      1548 +  color: var(--grey-600);                                    
+      1549 +}                                                            
+      1550 +                                                             
+      1551 +.qr-explain li {                                             
+      1552 +  padding-left: 15px;                                        
+      1553 +  border-left: 3px solid var(--navy-100);                    
+      1554 +}                                                            
+      1555 +                                                             
+      1556 +.qr-explain b {                                              
+      1557 +  color: var(--navy-800);                                    
+      1558 +}                                                            
+      1559 +                                                             
+      1560 +/* Printing the poster should give the poster alone, not the 
+           +whole dashboard. */                                          
+      1561 +@media print {                                               
+      1562 +  body * {                                                   
+      1563 +    visibility: hidden;                                      
+      1564 +  }                                                          
+      1565 +  .qr-print-area,                                            
+      1566 +  .qr-print-area * {                                         
+      1567 +    visibility: visible;                                     
+      1568 +  }                                                          
+      1569 +  .qr-print-area {                                           
+      1570 +    position: absolute;                                      
+      1571 +    left: 0;                                                 
+      1572 +    top: 0;                                                  
+      1573 +    width: 100%;                                             
+      1574 +    padding-top: 40px;                                       
+      1575 +  }                                                          
+      1576 +  .qr-frame img {                                            
+      1577 +    width: 340px;                                            
+      1578 +    height: 340px;                                           
+      1579 +  }                                                          
+      1580 +  .qr-title {                                                
+      1581 +    font-size: 19px;                                         
+      1582 +  }                                                          
+      1583 +  .qr-steps {                                                
+      1584 +    font-size: 15px;                                         
+      1585 +  }                                                          
+      1586 +}                                                            
+      1587 +                                                             
+      1588 +/* ========================================================= 
+      1589 +   The /scan page — public, phone-first, no sign-in.         
+      1590 +   Its own namespace: it renders outside the app shell.      
+      1591 +   ========================================================= 
+           +*/                                                           
+      1592 +                                                             
+      1593 +.scan-page {                                                 
+      1594 +  min-height: 100%;                                          
+      1595 +  background: var(--navy-800);                               
+      1596 +  display: flex;                                             
+      1597 +  justify-content: center;                                   
+      1598 +  padding: 0;                                                
+      1599 +}                                                            
+      1600 +                                                             
+      1601 +.scan-shell {                                                
+      1602 +  width: 100%;                                               
+      1603 +  max-width: 520px;                                          
+      1604 +  min-height: 100vh;                                         
+      1605 +  background: var(--grey-50);                                
+      1606 +  display: flex;                                             
+      1607 +  flex-direction: column;                                    
+      1608 +  box-shadow: var(--shadow-lg);                              
+      1609 +}                                                            
+      1610 +                                                             
+      1611 +.scan-head {                                                 
+      1612 +  position: sticky;                                          
+      1613 +  top: 0;                                                    
+      1614 +  z-index: 5;                                                
+      1615 +  display: flex;                                             
+      1616 +  align-items: center;                                       
+      1617 +  gap: 10px;                                                 
+      1618 +  padding: 18px 18px 16px;                                   
+      1619 +  background: var(--navy-800);                               
+      1620 +  color: var(--white);                                       
+      1621 +}                                                            
+      1622 +                                                             
+      1623 +.scan-head h1 {                                              
+      1624 +  font-size: 19px;                                           
+      1625 +  font-weight: 800;                                          
+      1626 +  letter-spacing: -0.01em;                                   
+      1627 +}                                                            
+      1628 +                                                             
+      1629 +.scan-head p {                                               
+      1630 +  margin-top: 2px;                                           
+      1631 +  font-size: 12.5px;                                         
+      1632 +  color: var(--navy-300);                                    
+      1633 +}                                                            
+      1634 +                                                             
+      1635 +.scan-back {                                                 
+      1636 +  flex: none;                                                
+      1637 +  width: 38px;                                               
+      1638 +  height: 38px;                                              
+      1639 +  display: grid;                                             
+      1640 +  place-items: center;                                       
+      1641 +  border: 0;                                                 
+      1642 +  border-radius: 50%;                                        
+      1643 +  background: rgba(255, 255, 255, 0.12);                     
+      1644 +  color: var(--white);                                       
+      1645 +  cursor: pointer;                                           
+      1646 +}                                                            
+      1647 +                                                             
+      1648 +.scan-back:active {                                          
+      1649 +  background: rgba(255, 255, 255, 0.24);                     
+      1650 +}                                                            
+      1651 +                                                             
+      1652 +.scan-body {                                                 
+      1653 +  flex: 1;                                                   
+      1654 +  padding: 18px;                                             
+      1655 +  display: flex;                                             
+      1656 +  flex-direction: column;                                    
+      1657 +  gap: 14px;                                                 
+      1658 +}                                                            
+      1659 +                                                             
+      1660 +.scan-body.list {                                            
+      1661 +  gap: 10px;                                                 
+      1662 +  padding-bottom: 96px;                                      
+      1663 +}                                                            
+      1664 +                                                             
+      1665 +.scan-lead {                                                 
+      1666 +  font-size: 14px;                                           
+      1667 +  color: var(--grey-600);                                    
+      1668 +  margin-bottom: 2px;                                        
+      1669 +}                                                            
+      1670 +                                                             
+      1671 +.scan-note {                                                 
+      1672 +  margin-top: auto;                                          
+      1673 +  padding-top: 20px;                                         
+      1674 +  text-align: center;                                        
+      1675 +  font-size: 12.5px;                                         
+      1676 +  color: var(--grey-500);                                    
+      1677 +}                                                            
+      1678 +                                                             
+      1679 +/* --- the two big home buttons --- */                       
+      1680 +                                                             
+      1681 +.scan-choice {                                               
+      1682 +  display: flex;                                             
+      1683 +  align-items: center;                                       
+      1684 +  gap: 15px;                                                 
+      1685 +  width: 100%;                                               
+      1686 +  padding: 22px 18px;                                        
+      1687 +  border: 2px solid var(--border);                           
+      1688 +  border-radius: var(--radius-lg);                           
+      1689 +  background: var(--white);                                  
+      1690 +  text-align: left;                                          
+      1691 +  cursor: pointer;                                           
+      1692 +  color: var(--navy-800);                                    
+      1693 +  transition: border-color 0.15s, transform 0.08s;           
+      1694 +}                                                            
+      1695 +                                                             
+      1696 +.scan-choice:active {                                        
+      1697 +  transform: scale(0.985);                                   
+      1698 +}                                                            
+      1699 +                                                             
+      1700 +.scan-choice.take {                                          
+      1701 +  border-color: var(--red-100);                              
+      1702 +}                                                            
+      1703 +                                                             
+      1704 +.scan-choice.take:hover {                                    
+      1705 +  border-color: var(--red-600);                              
+      1706 +}                                                            
+      1707 +                                                             
+      1708 +.scan-choice.give {                                          
+      1709 +  border-color: var(--navy-100);                             
+      1710 +}                                                            
+      1711 +                                                             
+      1712 +.scan-choice.give:hover {                                    
+      1713 +  border-color: var(--navy-600);                             
+      1714 +}                                                            
+      1715 +                                                             
+      1716 +.scan-choice > svg:first-child {                             
+      1717 +  flex: none;                                                
+      1718 +  color: var(--red-600);                                     
+      1719 +}                                                            
+      1720 +                                                             
+      1721 +.scan-choice.give > svg:first-child {                        
+      1722 +  color: var(--navy-600);                                    
+      1723 +}                                                            
+      1724 +                                                             
+      1725 +.scan-choice span {                                          
+      1726 +  flex: 1;                                                   
+      1727 +  min-width: 0;                                              
+      1728 +  display: block;                                            
+      1729 +}                                                            
+      1730 +                                                             
+      1731 +.scan-choice b {                                             
+      1732 +  display: block;                                            
+      1733 +  font-size: 16.5px;                                         
+      1734 +  font-weight: 700;                                          
+      1735 +}                                                            
+      1736 +                                                             
+      1737 +.scan-choice i {                                             
+      1738 +  display: block;                                            
+      1739 +  margin-top: 3px;                                           
+      1740 +  font-style: normal;                                        
+      1741 +  font-size: 12.5px;                                         
+      1742 +  line-height: 1.5;                                          
+      1743 +  color: var(--grey-500);                                    
+      1744 +}                                                            
+      1745 +                                                             
+      1746 +.scan-choice .chev {                                         
+      1747 +  flex: none;                                                
+      1748 +  color: var(--grey-300);                                    
+      1749 +}                                                            
+      1750 +                                                             
+      1751 +/* --- search --- */                                         
+      1752 +                                                             
+      1753 +.scan-search {                                               
+      1754 +  position: sticky;                                          
+      1755 +  top: 72px;                                                 
+      1756 +  z-index: 4;                                                
+      1757 +  display: flex;                                             
+      1758 +  align-items: center;                                       
+      1759 +  gap: 9px;                                                  
+      1760 +  margin: 0;                                                 
+      1761 +  padding: 12px 18px;                                        
+      1762 +  background: var(--grey-50);                                
+      1763 +  border-bottom: 1px solid var(--border);                    
+      1764 +  color: var(--grey-400);                                    
+      1765 +}                                                            
+      1766 +                                                             
+      1767 +.scan-search input {                                         
+      1768 +  flex: 1;                                                   
+      1769 +  min-width: 0;                                              
+      1770 +  border: 1px solid var(--border);                           
+      1771 +  border-radius: var(--radius);                              
+      1772 +  padding: 12px 13px;                                        
+      1773 +  font: inherit;                                             
+      1774 +  font-size: 15px; /* 16px-ish stops iOS zooming on focus */ 
+      1775 +  background: var(--white);                                  
+      1776 +  color: var(--text);                                        
+      1777 +}                                                            
+      1778 +                                                             
+      1779 +.scan-search input:focus {                                   
+      1780 +  outline: none;                                             
+      1781 +  border-color: var(--navy-500);                             
+      1782 +}                                                            
+      1783 +                                                             
+      1784 +.scan-search > button {                                      
+      1785 +  flex: none;                                                
+      1786 +  border: 0;                                                 
+      1787 +  background: none;                                          
+      1788 +  color: var(--grey-400);                                    
+      1789 +  cursor: pointer;                                           
+      1790 +  padding: 6px;                                              
+      1791 +}                                                            
+      1792 +                                                             
+      1793 +/* --- one material row --- */                               
+      1794 +                                                             
+      1795 +.scan-item {                                                 
+      1796 +  display: flex;                                             
+      1797 +  align-items: center;                                       
+      1798 +  gap: 12px;                                                 
+      1799 +  padding: 14px;                                             
+      1800 +  background: var(--white);                                  
+      1801 +  border: 1.5px solid var(--border);                         
+      1802 +  border-radius: var(--radius);                              
+      1803 +}                                                            
+      1804 +                                                             
+      1805 +.scan-item.picked {                                          
+      1806 +  border-color: var(--red-600);                              
+      1807 +  background: var(--red-50);                                 
+      1808 +}                                                            
+      1809 +                                                             
+      1810 +.scan-item.out {                                             
+      1811 +  opacity: 0.55;                                             
+      1812 +}                                                            
+      1813 +                                                             
+      1814 +.scan-item-main {                                            
+      1815 +  flex: 1;                                                   
+      1816 +  min-width: 0;                                              
+      1817 +  display: block;                                            
+      1818 +}                                                            
+      1819 +                                                             
+      1820 +.scan-item-main b {                                          
+      1821 +  display: block;                                            
+      1822 +  font-size: 14.5px;                                         
+      1823 +  font-weight: 650;                                          
+      1824 +  line-height: 1.35;                                         
+      1825 +}                                                            
+      1826 +                                                             
+      1827 +.scan-item-main i {                                          
+      1828 +  display: block;                                            
+      1829 +  margin-top: 2px;                                           
+      1830 +  font-style: normal;                                        
+      1831 +  font-size: 11.5px;                                         
+      1832 +  color: var(--grey-500);                                    
+      1833 +}                                                            
+      1834 +                                                             
+      1835 +.scan-item-main em {                                         
+      1836 +  display: inline-block;                                     
+      1837 +  margin-top: 5px;                                           
+      1838 +  font-style: normal;                                        
+      1839 +  font-size: 12px;                                           
+      1840 +  font-weight: 600;                                          
+      1841 +  color: var(--green-600);                                   
+      1842 +}                                                            
+      1843 +                                                             
+      1844 +.scan-item-main em.none {                                    
+      1845 +  color: var(--red-600);                                     
+      1846 +}                                                            
+      1847 +                                                             
+      1848 +.scan-add {                                                  
+      1849 +  flex: none;                                                
+      1850 +  width: 44px;                                               
+      1851 +  height: 44px;                                              
+      1852 +  display: grid;                                             
+      1853 +  place-items: center;                                       
+      1854 +  border: 0;                                                 
+      1855 +  border-radius: 50%;                                        
+      1856 +  background: var(--navy-800);                               
+      1857 +  color: var(--white);                                       
+      1858 +  cursor: pointer;                                           
+      1859 +}                                                            
+      1860 +                                                             
+      1861 +.scan-add:active {                                           
+      1862 +  background: var(--navy-600);                               
+      1863 +}                                                            
+      1864 +                                                             
+      1865 +.scan-stepper {                                              
+      1866 +  flex: none;                                                
+      1867 +  display: flex;                                             
+      1868 +  align-items: center;                                       
+      1869 +  gap: 2px;                                                  
+      1870 +  background: var(--white);                                  
+      1871 +  border: 1.5px solid var(--navy-800);                       
+      1872 +  border-radius: 999px;                                      
+      1873 +  padding: 3px;                                              
+      1874 +}                                                            
+      1875 +                                                             
+      1876 +.scan-stepper button {                                       
+      1877 +  width: 34px;                                               
+      1878 +  height: 34px;                                              
+      1879 +  display: grid;                                             
+      1880 +  place-items: center;                                       
+      1881 +  border: 0;                                                 
+      1882 +  border-radius: 50%;                                        
+      1883 +  background: var(--navy-800);                               
+      1884 +  color: var(--white);                                       
+      1885 +  cursor: pointer;                                           
+      1886 +}                                                            
+      1887 +                                                             
+      1888 +.scan-stepper button:disabled {                              
+      1889 +  opacity: 0.35;                                             
+      1890 +  cursor: not-allowed;                                       
+      1891 +}                                                            
+      1892 +                                                             
+      1893 +.scan-stepper input {                                        
+      1894 +  width: 46px;                                               
+      1895 +  border: 0;                                                 
+      1896 +  text-align: center;                                        
+      1897 +  font: inherit;                                             
+      1898 +  font-size: 15px;                                           
+      1899 +  font-weight: 700;                                          
+      1900 +  color: var(--navy-800);                                    
+      1901 +  background: none;                                          
+      1902 +  -moz-appearance: textfield;                                
+      1903 +}                                                            
+      1904 +                                                             
+      1905 +.scan-stepper input::-webkit-outer-spin-button,              
+      1906 +.scan-stepper input::-webkit-inner-spin-button {             
+      1907 +  -webkit-appearance: none;                                  
+      1908 +  margin: 0;                                                 
+      1909 +}                                                            
+      1910 +                                                             
+      1911 +.scan-stepper input:focus {                                  
+      1912 +  outline: none;                                             
+      1913 +}                                                            
+      1914 +                                                             
+      1915 +/* --- sticky action bar --- */                              
+      1916 +                                                             
+      1917 +.scan-bar {                                                  
+      1918 +  position: fixed;                                           
+      1919 +  bottom: 0;                                                 
+      1920 +  width: 100%;                                               
+      1921 +  max-width: 520px;                                          
+      1922 +  display: flex;                                             
+      1923 +  align-items: center;                                       
+      1924 +  gap: 12px;                                                 
+      1925 +  padding: 13px 18px calc(13px + env(safe-area-inset-bottom))
+           +;                                                            
+      1926 +  background: var(--white);                                  
+      1927 +  border-top: 1px solid var(--border);                       
+      1928 +  box-shadow: 0 -4px 18px rgba(16, 31, 73, 0.09);            
+      1929 +}                                                            
+      1930 +                                                             
+      1931 +.scan-bar > span {                                           
+      1932 +  flex: 1;                                                   
+      1933 +  font-size: 13.5px;                                         
+      1934 +  color: var(--grey-600);                                    
+      1935 +}                                                            
+      1936 +                                                             
+      1937 +.scan-bar b {                                                
+      1938 +  color: var(--navy-800);                                    
+      1939 +}                                                            
+      1940 +                                                             
+      1941 +/* --- fields --- */                                         
+      1942 +                                                             
+      1943 +.scan-field {                                                
+      1944 +  display: block;                                            
+      1945 +}                                                            
+      1946 +                                                             
+      1947 +.scan-field > span {                                         
+      1948 +  display: block;                                            
+      1949 +  margin-bottom: 6px;                                        
+      1950 +  font-size: 13px;                                           
+      1951 +  font-weight: 650;                                          
+      1952 +  color: var(--navy-800);                                    
+      1953 +}                                                            
+      1954 +                                                             
+      1955 +.scan-field > span i {                                       
+      1956 +  font-style: normal;                                        
+      1957 +  color: var(--red-600);                                     
+      1958 +}                                                            
+      1959 +                                                             
+      1960 +.scan-field > span em {                                      
+      1961 +  font-style: normal;                                        
+      1962 +  font-weight: 500;                                          
+      1963 +  color: var(--grey-500);                                    
+      1964 +}                                                            
+      1965 +                                                             
+      1966 +.scan-field input,                                           
+      1967 +.scan-field select,                                          
+      1968 +.scan-field textarea {                                       
+      1969 +  width: 100%;                                               
+      1970 +  padding: 13px;                                             
+      1971 +  border: 1.5px solid var(--border);                         
+      1972 +  border-radius: var(--radius);                              
+      1973 +  font: inherit;                                             
+      1974 +  font-size: 15px;                                           
+      1975 +  background: var(--white);                                  
+      1976 +  color: var(--text);                                        
+      1977 +}                                                            
+      1978 +                                                             
+      1979 +.scan-field input:focus,                                     
+      1980 +.scan-field select:focus,                                    
+      1981 +.scan-field textarea:focus {                                 
+      1982 +  outline: none;                                             
+      1983 +  border-color: var(--navy-500);                             
+      1984 +}                                                            
+      1985 +                                                             
+      1986 +.scan-field textarea {                                       
+      1987 +  resize: vertical;                                          
+      1988 +}                                                            
+      1989 +                                                             
+      1990 +.scan-more {                                                 
+      1991 +  border-top: 1px dashed var(--border);                      
+      1992 +  padding-top: 12px;                                         
+      1993 +}                                                            
+      1994 +                                                             
+      1995 +.scan-more summary {                                         
+      1996 +  cursor: pointer;                                           
+      1997 +  font-size: 13px;                                           
+      1998 +  font-weight: 600;                                          
+      1999 +  color: var(--navy-600);                                    
+      2000 +  padding: 4px 0;                                            
+      2001 +}                                                            
+      2002 +                                                             
+      2003 +.scan-more > .scan-field {                                   
+      2004 +  margin-top: 12px;                                          
+      2005 +}                                                            
+      2006 +                                                             
+      2007 +/* --- chosen summary --- */                                 
+      2008 +                                                             
+      2009 +.scan-summary {                                              
+      2010 +  padding: 13px 15px;                                        
+      2011 +  background: var(--white);                                  
+      2012 +  border: 1.5px solid var(--border);                         
+      2013 +  border-radius: var(--radius);                              
+      2014 +  font-size: 13.5px;                                         
+      2015 +}                                                            
+      2016 +                                                             
+      2017 +.scan-summary > div {                                        
+      2018 +  display: flex;                                             
+      2019 +  justify-content: space-between;                            
+      2020 +  gap: 12px;                                                 
+      2021 +  padding: 5px 0;                                            
+      2022 +}                                                            
+      2023 +                                                             
+      2024 +.scan-summary > div + div {                                  
+      2025 +  border-top: 1px solid var(--grey-100);                     
+      2026 +}                                                            
+      2027 +                                                             
+      2028 +.scan-summary b {                                            
+      2029 +  flex: none;                                                
+      2030 +  color: var(--navy-800);                                    
+      2031 +}                                                            
+      2032 +                                                             
+      2033 +.scan-summary.plain {                                        
+      2034 +  text-align: left;                                          
+      2035 +  width: 100%;                                               
+      2036 +}                                                            
+      2037 +                                                             
+      2038 +.scan-link {                                                 
+      2039 +  margin-top: 8px;                                           
+      2040 +  border: 0;                                                 
+      2041 +  background: none;                                          
+      2042 +  padding: 0;                                                
+      2043 +  font: inherit;                                             
+      2044 +  font-size: 12.5px;                                         
+      2045 +  font-weight: 600;                                          
+      2046 +  color: var(--red-600);                                     
+      2047 +  cursor: pointer;                                           
+      2048 +  text-decoration: underline;                                
+      2049 +}                                                            
+      2050 +                                                             
+      2051 +/* --- buttons, alerts, empty --- */                         
+      2052 +                                                             
+      2053 +.scan-btn {                                                  
+      2054 +  display: inline-flex;                                      
+      2055 +  align-items: center;                                       
+      2056 +  justify-content: center;                                   
+      2057 +  gap: 8px;                                                  
+      2058 +  padding: 14px 22px;                                        
+      2059 +  border: 0;                                                 
+      2060 +  border-radius: var(--radius);                              
+      2061 +  background: var(--red-600);                                
+      2062 +  color: var(--white);                                       
+      2063 +  font: inherit;                                             
+      2064 +  font-size: 15px;                                           
+      2065 +  font-weight: 650;                                          
+      2066 +  cursor: pointer;                                           
+      2067 +}                                                            
+      2068 +                                                             
+      2069 +.scan-btn:active:not(:disabled) {                            
+      2070 +  background: var(--red-700);                                
+      2071 +}                                                            
+      2072 +                                                             
+      2073 +.scan-btn:disabled {                                         
+      2074 +  opacity: 0.55;                                             
+      2075 +  cursor: not-allowed;                                       
+      2076 +}                                                            
+      2077 +                                                             
+      2078 +.scan-btn.block {                                            
+      2079 +  width: 100%;                                               
+      2080 +}                                                            
+      2081 +                                                             
+      2082 +.scan-btn.ghost {                                            
+      2083 +  background: var(--white);                                  
+      2084 +  color: var(--navy-800);                                    
+      2085 +  border: 1.5px solid var(--border);                         
+      2086 +}                                                            
+      2087 +                                                             
+      2088 +.scan-btn.sm {                                               
+      2089 +  padding: 9px 15px;                                         
+      2090 +  font-size: 13px;                                           
+      2091 +  margin-top: 12px;                                          
+      2092 +}                                                            
+      2093 +                                                             
+      2094 +.scan-alert {                                                
+      2095 +  padding: 12px 14px;                                        
+      2096 +  border-radius: var(--radius);                              
+      2097 +  font-size: 13.5px;                                         
+      2098 +  line-height: 1.6;                                          
+      2099 +}                                                            
+      2100 +                                                             
+      2101 +.scan-alert.error {                                          
+      2102 +  background: var(--red-50);                                 
+      2103 +  border: 1px solid var(--red-100);                          
+      2104 +  color: var(--red-700);                                     
+      2105 +}                                                            
+      2106 +                                                             
+      2107 +.scan-empty {                                                
+      2108 +  padding: 40px 20px;                                        
+      2109 +  text-align: center;                                        
+      2110 +  font-size: 13.5px;                                         
+      2111 +  color: var(--grey-500);                                    
+      2112 +}                                                            
+      2113 +                                                             
+      2114 +/* --- the finished screen --- */                            
+      2115 +                                                             
+      2116 +.scan-body.done {                                            
+      2117 +  align-items: center;                                       
+      2118 +  text-align: center;                                        
+      2119 +  padding-top: 44px;                                         
+      2120 +}                                                            
+      2121 +                                                             
+      2122 +.scan-tick {                                                 
+      2123 +  width: 76px;                                               
+      2124 +  height: 76px;                                              
+      2125 +  display: grid;                                             
+      2126 +  place-items: center;                                       
+      2127 +  border-radius: 50%;                                        
+      2128 +  background: var(--green-100);                              
+      2129 +  color: var(--green-600);                                   
+      2130 +}                                                            
+      2131 +                                                             
+      2132 +.scan-body.done h2 {                                         
+      2133 +  font-size: 21px;                                           
+      2134 +  font-weight: 800;                                          
+      2135 +}                                                            
+      2136 +                                                             
+      2137 +.scan-body.done > p {                                        
+      2138 +  font-size: 14px;                                           
+      2139 +  color: var(--grey-600);                                    
+      2140 +  margin-top: -6px;                                          
+      2141 +}                                                            
+      2142 +                                                             
+      2143 +.scan-code {                                                 
+      2144 +  width: 100%;                                               
+      2145 +  padding: 16px;                                             
+      2146 +  border-radius: var(--radius-lg);                           
+      2147 +  background: var(--navy-800);                               
+      2148 +  color: var(--white);                                       
+      2149 +}                                                            
+      2150 +                                                             
+      2151 +.scan-code span {                                            
+      2152 +  display: block;                                            
+      2153 +  font-size: 11.5px;                                         
+      2154 +  letter-spacing: 0.1em;                                     
+      2155 +  text-transform: uppercase;                                 
+      2156 +  color: var(--navy-300);                                    
+      2157 +}                                                            
+      2158 +                                                             
+      2159 +.scan-code b {                                               
+      2160 +  display: block;                                            
+      2161 +  margin-top: 4px;                                           
+      2162 +  font-size: 26px;                                           
+      2163 +  font-weight: 800;                                          
+      2164 +  letter-spacing: 0.04em;                                    
+      2165 +}                                                            
+      2166 +                                                             
+      2167 +.scan-due {                                                  
+      2168 +  font-size: 14px;                                           
+      2169 +  color: var(--grey-600);                                    
+      2170 +}                                                            
+      2171 +                                                             
+      2172 +.scan-due b {                                                
+      2173 +  color: var(--red-600);                                     
+      2174 +}                                                            
+      2175 +                                                             
+      2176 +.scan-foot {                                                 
+      2177 +  padding: 18px;                                             
+      2178 +  text-align: center;                                        
+      2179 +  font-size: 11.5px;                                         
+      2180 +  letter-spacing: 0.05em;                                    
+      2181 +  color: var(--grey-400);                                    
+      2182 +  border-top: 1px solid var(--border);                       
+      2183 +}                                                            
+      2184 +                                                             
+      2185 +@media (min-width: 560px) {                                  
+      2186 +  .scan-shell {                                              
+      2187 +    min-height: auto;                                        
+      2188 +    margin: 28px 0;                                          
+      2189 +    border-radius: var(--radius-lg);                         
+      2190 +    overflow: hidden;                                        
+      2191 +  }                                                          
+      2192 +  .scan-bar {                                                
+      2193 +    position: sticky;                                        
+      2194 +  }                                                          
+      2195 +}                                                            
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\README.md)
+  ⎿  Added 1 line
+      59  | **Inventory List** | Every material with photo, condition, lo
+          cation, documents; search, filter, sort, CSV import/export |
+      60  | **Issue / Receive** | Six update types — issue, receive, retu
+          rn, transfer, write off, correction — each adjusting the count 
+          and leaving an audit entry |
+      61  | **Pending Returns** | What is out with whom, what is overdue,
+           one-click return and email reminders |
+      62 +| **QR Self-Service** | A printable store QR code. Anyone scans
+         + it and takes or returns material without signing in |         
+      63  | **Reports** | Movement log with a running count, department u
+          sage, who-has-what |
+      64  | **Master Lists** | Categories, locations, racks, departments,
+           vendors, units, projects, sources, conditions |
+      65  | **Custom Fields** | Add or remove any material or update attr
+          ibute yourself |  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Update(~\Desktop\SI DASHBOaRD\README.md)
+  ⎿  Added 37 lines
+      110  
+      111  ---
+      112  
+      113 +## The store QR code (self-service)                           
+      114 +                                                              
+      115 +**QR Self-Service** in the sidebar shows one QR code for the w
+          +hole store. Print it,                                         
+      116 +stick it on the store door, and anyone can take or return mate
+          +rial from their phone                                         
+      117 +— no account, no password, no sign-in screen.                 
+      118 +                                                              
+      119 +**Taking material.** They scan, tap *Take material*, search th
+          +e list and set a                                              
+      120 +quantity, then fill in four things: **name**, **department**, 
+          +**the date they will                                          
+      121 +return it**, and **email** (optional — it sends them a copy). 
+          +Employee ID and a                                             
+      122 +reason are tucked behind an "optional" toggle so the form stay
+          +s short. On submit                                            
+      123 +they get a reference code like `SS-000012`.                   
+      124 +                                                              
+      125 +**Returning it.** They scan again, tap *Return material*, type
+          + their name or email,                                         
+      126 +and tick what they are giving back. No code to remember — thou
+          +gh the `SS-` reference                                        
+      127 +works as a lookup too.                                        
+      128 +                                                              
+      129 +Nothing is a special kind of record: each line becomes an ordi
+          +nary returnable                                               
+      130 +**ISSUE**, so it lands in Pending Returns, the movement log, t
+          +he reports and the CSV                                        
+      131 +exports exactly like a counter-issued one. Stock moves the mom
+          +ent they submit, and                                          
+      132 +the same guards apply — nobody can take more than is on the sh
+          +elf. Entries carry                                            
+      133 +`selfService: true`, which is all the QR Self-Service page fil
+          +ters on.                                                      
+      134 +                                                              
+      135 +**Closing the counter.** Switch **QR Self-Service** off under 
+          +Settings → Modules &                                          
+      136 +tools. The public page then tells scanners to see the store ke
+          +eper, and the API                                             
+      137 +refuses self-service writes.                                  
+      138 +                                                              
+      139 +The public endpoints live under `/api/public` in `server/src/r
+          +outes/public.routes.js`                                       
+      140 +— rate limited, no token, and reachable only for the catalogue
+          +, an issue, a holdings                                        
+      141 +lookup and a return. The phone screen is `client/src/pages/Sca
+          +n.jsx` at `/scan`,                                            
+      142 +outside the signed-in layout.                                 
+      143 +                                                              
+      144 +> For phones to reach it, `/scan` has to be on an address they
+          + can open — the office                                        
+      145 +> network or a deployed URL, not `localhost`. The QR code is g
+          +enerated from whatever                                        
+      146 +> address you loaded the dashboard on.                        
+      147 +                                                              
+      148 +---                                                           
+      149 +                                                              
+      150  ## Adding a field without touching code
+      151  
+      152  1. Go to **Custom Fields**.
+  ⎿  PostToolUse:Edit hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (15 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Now verifying — build, server syntax, and a CSS class check, all independent.
+
+  Ran 4 shell commands (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (18 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (21 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (24 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (27 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Build is clean and all server files parse. Two last independent checks.
+
+  Ran 2 shell commands (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (9 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (12 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● .cell-main/.cell-sub live under table.data, which is where I use them. Now
+  checking the boot log and probing the new endpoints — independent of each
+  other.
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+  ⎿  PreToolUse:Bash hook error
+  ⎿  Failed with non-blocking status code: <3>WSL (15 - Relay) ERROR: 
+     CreateProcessCommon:735: execvpe(/bin/bash) failed: No such file or 
+     directory
+
+● Background command "Start API server to verify it boots" failed with exit code
+1
+
+● The API on port 5000 is your already-running one, and node --watch picked up
+  my changes — so those probes hit the new code live against your real database:
+
+  - GET /api/public/catalog → returned your item plus the departments list ✓
+  - GET /api/public/holdings?q=ab → "Type at least 3 characters…" ✓
+  - POST /api/public/issue with junk → "Please enter your name." ✓
+
+  (My own node src/server.js exited because port 5000 was already taken — that's
+  the expected message, not a failure of the code.)
+
+  What's built
+
+  The phone page — /scan, no login at any point
+
+  Scan → two big buttons: Take material / Return material.
+
+  Taking: search the list, tap +, set quantity with a stepper. Next screen asks
+  four things — name, department (dropdown from your Departments master list,
+  with "Other" to type one), returning on (date, defaults to a week out), and
+  email (marked optional). Employee ID and a reason sit behind an "optional"
+  toggle so the form stays short. Submit → a big reference code like SS-000012,
+  and an email copy if they gave an address.
+
+  Returning: type name, email, or the SS- code → see everything out in their
+  name → tick what's coming back → done. No code required.
+
+  Admin side — "QR Self-Service" in the sidebar
+
+  The QR code with Print / Download PNG / Copy link, a print stylesheet that
+  prints the poster alone (code + three numbered steps), four stat tiles (taken,
+  still out, overdue, people), and a plain table of who took what, when, and
+  whether it's back. Tabs for Everything / Still out / Taken / Returned. No
+  charts.
+
+  How it fits the existing system: each line becomes an ordinary returnable
+  ISSUE, so it flows into Pending Returns, the movement log, reports and CSV
+  exports untouched. Stock moves on submit, and the same guard applies — nobody
+  can take more than is on the shelf. Entries carry selfService: true. Public
+  writes broadcast over Socket.IO so your dashboard updates live. Switching the
+  module off under Settings → Modules & tools closes the counter, and the API
+  refuses self-service writes.
+
+  Two things before it's usable
+
+  1. The sidebar entry needs a seed run — the selfservice module isn't in your
+  database yet:
+
+  cd server && npm run seed
+
+  This writes to your live Atlas database (adds the module, renumbers the
+  sidebar order). Safe and re-runnable per your README, but it's your data — say
+  the word and I'll run it, or run it yourself.
+
+  2. Phones can't reach localhost. The QR encodes whatever address you loaded
+  the dashboard on. For real scanning it needs your office LAN IP or a deployed
+  URL.
+
+  I did not run a live issue-and-return end-to-end, because that writes
+  permanent transaction records into your real inventory. Happy to do one
+  round-trip on the valorant test item (issue 1, return 1 — net stock unchanged,
+  two audit records left behind) if you want it proven before you print the
+  poster.
+
+✻ Worked for 9m 8s · done 3:52 PM
+
+※ recap: Goal: add a no-login QR self-service counter so anyone can scan, take, and return store material. The code is built and verified; next step is running `cd server && npm run seed` to make the sidebar entry appear. (disable recaps in /config)
