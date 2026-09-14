@@ -1,10 +1,11 @@
 import axios from 'axios';
+import { API_BASE } from './config.js';
 import { getSocketId } from './socket.js';
 
 export const TOKEN_KEY = 'si_inventory_token';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -19,12 +20,16 @@ api.interceptors.request.use((config) => {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** A dev-server restart drops connections for a second or two — worth retrying. */
+/**
+ * Worth retrying: a dev-server restart drops connections for a second or two, and
+ * a hosted backend that has gone idle answers 502/503/504 while it wakes up.
+ */
 const isTransient = (error) =>
-  error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED' || error.response?.status === 503;
+  error.code === 'ERR_NETWORK' || error.code === 'ECONNABORTED' || [502, 503, 504].includes(error.response?.status);
 
-const MAX_RETRIES = 2;
-const RETRY_DELAY = 800;
+// 1s, 2s, 3s, 4s — about ten seconds in all, enough to ride out a backend waking up.
+const MAX_RETRIES = 4;
+const RETRY_DELAY = 1000;
 
 api.interceptors.response.use(
   (res) => res,
@@ -45,7 +50,9 @@ api.interceptors.response.use(
     const message =
       error.response?.data?.message ||
       (error.code === 'ERR_NETWORK'
-        ? 'Cannot reach the API server. Start it with: cd server && npm run dev'
+        ? import.meta.env.DEV
+          ? 'Cannot reach the API server. Start it with: cd server && npm run dev'
+          : 'Cannot reach the server right now. It may be starting up — please try again in a moment.'
         : error.message);
 
     // An expired or revoked token should drop the session, but never on the

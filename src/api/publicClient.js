@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { API_BASE } from './config.js';
 
 /**
  * A bare axios instance for the QR self-service screens. Deliberately separate
@@ -6,7 +7,7 @@ import axios from 'axios';
  * visitor to the login page — nobody scanning the store QR code has an account.
  */
 const publicApi = axios.create({
-  baseURL: '/api/public',
+  baseURL: `${API_BASE}/public`,
   headers: { 'Content-Type': 'application/json' },
 });
 

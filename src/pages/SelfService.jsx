@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import QRCode from 'qrcode';
 import api from '../api/client.js';
+import { PUBLIC_APP_URL } from '../api/config.js';
 import Icon from '../components/Icon.jsx';
 import { Badge, Empty, Loading, StatCard, fmtDate, fmtDateTime, fmtNum } from '../components/ui.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -14,7 +15,7 @@ import { useLiveUpdates } from '../context/SocketContext.jsx';
 export default function SelfService() {
   const toast = useToast();
 
-  const scanUrl = `${window.location.origin}/scan`;
+  const scanUrl = `${PUBLIC_APP_URL}/scan`;
   const [qr, setQr] = useState('');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
