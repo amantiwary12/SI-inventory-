@@ -252,7 +252,7 @@ export default function ItemDetail() {
                     </a>
                     <span className="cell-sub nowrap">{a.bytes ? `${Math.round(a.bytes / 1024)} KB` : ''}</span>
                     {canManageInventory ? (
-                      <button className="icon-btn danger" onClick={() => removeAttachment(a)} title="Remove">
+                      <button className="icon-btn danger" onClick={() => removeAttachment(a)} title="Remove" aria-label="Remove attachment">
                         <Icon name="x" size={13} />
                       </button>
                     ) : null}

@@ -189,7 +189,7 @@ export default function Returns() {
                         <td>
                           <div className="actions">
                             {overdue && canWrite ? (
-                              <button className="icon-btn" title="Email a reminder" onClick={() => remind(t)}>
+                              <button className="icon-btn" title="Email a reminder" aria-label="Email a reminder" onClick={() => remind(t)}>
                                 <Icon name="mail" size={14} />
                               </button>
                             ) : null}

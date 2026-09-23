@@ -227,23 +227,24 @@ export default function Users() {
                             <div className="actions">
                               {isAdmin ? (
                                 <>
-                                  <button className="icon-btn" title="Edit" onClick={() => openEdit(u)}>
+                                  <button className="icon-btn" title="Edit" aria-label="Edit" onClick={() => openEdit(u)}>
                                     <Icon name="edit" size={14} />
                                   </button>
                                   {u.id !== me.id ? (
                                     <>
                                       {u.active ? (
-                                        <button className="icon-btn" title="Deactivate" onClick={() => setActive(u, false)}>
+                                        <button className="icon-btn" title="Deactivate" aria-label="Deactivate" onClick={() => setActive(u, false)}>
                                           <Icon name="lock" size={14} />
                                         </button>
                                       ) : (
-                                        <button className="icon-btn" title="Reactivate" onClick={() => setActive(u, true)}>
+                                        <button className="icon-btn" title="Reactivate" aria-label="Reactivate" onClick={() => setActive(u, true)}>
                                           <Icon name="unlock" size={14} />
                                         </button>
                                       )}
                                       <button
                                         className="icon-btn danger"
                                         title="Delete"
+                                        aria-label="Delete"
                                         onClick={() =>
                                           setConfirm({
                                             user: u,

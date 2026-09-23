@@ -185,13 +185,14 @@ export default function Fields() {
       </td>
       <td>
         <div className="actions">
-          <button className="icon-btn" title="Edit" onClick={() => openEdit(f)}>
+          <button className="icon-btn" title="Edit" aria-label="Edit" onClick={() => openEdit(f)}>
             <Icon name="edit" size={14} />
           </button>
           {isAdmin && !f.locked ? (
             <button
               className="icon-btn danger"
               title={f.isSystem ? 'Hide this built-in field' : 'Delete this field'}
+              aria-label={f.isSystem ? 'Hide this built-in field' : 'Delete this field'}
               onClick={() =>
                 setConfirm({
                   field: f,

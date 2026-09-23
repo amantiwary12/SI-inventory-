@@ -178,7 +178,7 @@ export default function Masters() {
                         <td>
                           <div className="actions">
                             {canManageInventory ? (
-                              <button className="icon-btn" title="Edit" onClick={() => openEdit(r)}>
+                              <button className="icon-btn" title="Edit" aria-label="Edit" onClick={() => openEdit(r)}>
                                 <Icon name="edit" size={14} />
                               </button>
                             ) : null}
@@ -186,6 +186,7 @@ export default function Masters() {
                               <button
                                 className="icon-btn danger"
                                 title="Remove"
+                                aria-label="Remove"
                                 onClick={() =>
                                   setConfirm({
                                     row: r,

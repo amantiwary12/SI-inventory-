@@ -242,7 +242,12 @@ export default function Inventory() {
             </option>
           ))}
         </select>
-        <button className="icon-btn" onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))} title={sortDir === 'asc' ? 'Ascending' : 'Descending'}>
+        <button
+          className="icon-btn"
+          onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))}
+          title={sortDir === 'asc' ? 'Ascending' : 'Descending'}
+          aria-label={sortDir === 'asc' ? 'Sort ascending' : 'Sort descending'}
+        >
           <Icon name={sortDir === 'asc' ? 'arrow-up' : 'arrow-down'} size={15} />
         </button>
 
@@ -476,7 +481,7 @@ export default function Inventory() {
                         <td onClick={(e) => e.stopPropagation()}>
                           <div className="actions">
                             {canWrite && i.active ? (
-                              <button className="icon-btn" title="Issue / receive" onClick={() => setIssueFor(i)}>
+                              <button className="icon-btn" title="Issue / receive" aria-label="Issue / receive" onClick={() => setIssueFor(i)}>
                                 <Icon name="exchange" size={14} />
                               </button>
                             ) : null}
@@ -485,6 +490,7 @@ export default function Inventory() {
                                 <button
                                   className="icon-btn"
                                   title="Edit"
+                                  aria-label="Edit"
                                   onClick={() => {
                                     setEditing(i);
                                     setFormOpen(true);
@@ -495,6 +501,7 @@ export default function Inventory() {
                                 <button
                                   className="icon-btn danger"
                                   title="Archive"
+                                  aria-label="Archive"
                                   onClick={() =>
                                     setConfirm({
                                       item: i,
@@ -518,6 +525,7 @@ export default function Inventory() {
                               <button
                                 className="icon-btn danger"
                                 title="Delete permanently"
+                                aria-label="Delete permanently"
                                 onClick={() =>
                                   setConfirm({
                                     item: i,

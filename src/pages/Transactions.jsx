@@ -331,13 +331,14 @@ export default function Transactions() {
                         </td>
                         <td onClick={(e) => e.stopPropagation()}>
                           <div className="actions">
-                            <button className="icon-btn" title="View" onClick={() => setDetail(t)}>
+                            <button className="icon-btn" title="View" aria-label="View" onClick={() => setDetail(t)}>
                               <Icon name="eye" size={14} />
                             </button>
                             {isAdmin ? (
                               <button
                                 className="icon-btn danger"
                                 title="Reverse and delete"
+                                aria-label="Reverse and delete"
                                 onClick={() =>
                                   setConfirmDel({
                                     txn: t,

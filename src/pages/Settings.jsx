@@ -311,6 +311,7 @@ export default function Settings() {
                       <button
                         className="icon-btn danger"
                         title="Remove from sidebar"
+                        aria-label="Remove from sidebar"
                         onClick={() => setConfirm({ module: m, title: `Remove "${m.label}"?`, message: 'It disappears from the sidebar for everyone. No inventory data is affected.' })}
                       >
                         <Icon name="trash" size={13} />
