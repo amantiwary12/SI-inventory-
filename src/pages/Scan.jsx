@@ -241,7 +241,7 @@ export default function Scan() {
         {/* ------------------------------- home ------------------------------- */}
         {screen === 'home' ? (
           <>
-            <Header title="SI Store" sub="System Integration · material counter" />
+            <Header title="R&D Store" sub="R&D · material counter" />
             <div className="scan-body">
               <p className="scan-lead">What would you like to do?</p>
 
@@ -689,7 +689,7 @@ export default function Scan() {
           </div>
         ) : null}
 
-        <footer className="scan-foot">System Integration · Aartech Solonics</footer>
+        <footer className="scan-foot">R&amp;D · Aartech Solonics</footer>
       </div>
     </div>
   );

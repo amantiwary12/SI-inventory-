@@ -9,7 +9,7 @@ import api from '../api/client.js';
 
 const TITLES = {
   '/': ['Overview', 'Item counts, low quantity alerts and the latest updates'],
-  '/inventory': ['Inventory List', 'Every material held by System Integration'],
+  '/inventory': ['Inventory List', 'Every material held by R&D'],
   '/transactions': ['Issue & Receive', 'Record and trace every update'],
   '/returns': ['Pending Returns', 'Material issued out and not yet returned'],
   '/self-service': ['QR Self-Service', 'The store QR code, and what people took by scanning it'],
@@ -30,9 +30,9 @@ export const Brand = ({ compact = false }) => (
     {compact ? null : (
       <div className="brand-text">
         <b>
-          SI <i>INVENTORY</i>
+          R&D <i>INVENTORY</i>
         </b>
-        <span>SYSTEM INTEGRATION</span>
+        <span>RESEARCH &amp; DEVELOPMENT</span>
       </div>
     )}
   </>
@@ -65,7 +65,7 @@ export default function Layout() {
   useLiveUpdates(['items', 'transactions'], loadAlerts);
 
   const [title, subtitle] = TITLES[location.pathname] ||
-    (location.pathname.startsWith('/inventory/') ? ['Item Details', 'Full record and movement history'] : ['SI Inventory', '']);
+    (location.pathname.startsWith('/inventory/') ? ['Item Details', 'Full record and movement history'] : ['R&D Inventory', '']);
 
   const nav = modules.filter((m) => m.enabled);
 
@@ -108,7 +108,7 @@ export default function Layout() {
         </nav>
 
         <div className="sidebar-foot">
-          System Integration
+          R&amp;D
           <br />
           Inventory Dashboard
         </div>

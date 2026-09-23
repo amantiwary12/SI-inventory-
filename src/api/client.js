@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_BASE } from './config.js';
 import { getSocketId } from './socket.js';
 
-export const TOKEN_KEY = 'si_inventory_token';
+export const TOKEN_KEY = 'rd_inventory_token';
 
 const api = axios.create({
   baseURL: API_BASE,

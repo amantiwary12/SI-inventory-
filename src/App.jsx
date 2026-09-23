@@ -24,7 +24,7 @@ const SelfService = lazy(() => import('./pages/SelfService.jsx'));
 
 function Protected({ children }) {
   const { user, booting } = useAuth();
-  if (booting) return <Loading label="Starting SI Inventory…" />;
+  if (booting) return <Loading label="Starting R&D Inventory…" />;
   return user ? children : <Navigate to="/login" replace />;
 }
 
@@ -37,7 +37,7 @@ function RoleGate({ allow, children }) {
 export default function App() {
   const { user, booting } = useAuth();
 
-  if (booting) return <Loading label="Starting SI Inventory…" />;
+  if (booting) return <Loading label="Starting R&D Inventory…" />;
 
   return (
     <Suspense fallback={<Loading label="Loading…" />}>

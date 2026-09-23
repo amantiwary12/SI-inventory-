@@ -80,7 +80,7 @@ export default function Login() {
         </div>
 
         <h2>
-          System Integration <em>Inventory</em>
+          R&amp;D <em>Inventory</em>
         </h2>
         <p className="lead">
           One list for every material the team holds, issues or receives — whether it comes from AIC, a vendor, another

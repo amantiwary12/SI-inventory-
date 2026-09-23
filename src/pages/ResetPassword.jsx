@@ -39,9 +39,9 @@ export default function ResetPassword() {
           </div>
           <div>
             <b style={{ fontSize: 14.5, letterSpacing: '.6px' }}>
-              SI <span style={{ color: 'var(--red-600)' }}>INVENTORY</span>
+              R&amp;D <span style={{ color: 'var(--red-600)' }}>INVENTORY</span>
             </b>
-            <div style={{ fontSize: 9.5, letterSpacing: 1.7, color: 'var(--grey-500)' }}>SYSTEM INTEGRATION</div>
+            <div style={{ fontSize: 9.5, letterSpacing: 1.7, color: 'var(--grey-500)' }}>RESEARCH &amp; DEVELOPMENT</div>
           </div>
         </div>
 

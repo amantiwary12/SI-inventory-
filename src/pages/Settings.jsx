@@ -330,7 +330,7 @@ export default function Settings() {
           <div className="card-head">
             <div style={{ flex: 1 }}>
               <h3>About this dashboard</h3>
-              <p>System Integration Inventory</p>
+              <p>R&amp;D Inventory</p>
             </div>
           </div>
           <div className="card-body">

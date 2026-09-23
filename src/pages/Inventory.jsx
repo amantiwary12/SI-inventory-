@@ -133,7 +133,7 @@ export default function Inventory() {
 
   async function exportCSV() {
     try {
-      await downloadCSV('/items/export', query, `si-inventory-${new Date().toISOString().slice(0, 10)}.csv`);
+      await downloadCSV('/items/export', query, `rd-inventory-${new Date().toISOString().slice(0, 10)}.csv`);
       toast.success('Export ready', 'The CSV has been downloaded.');
     } catch (err) {
       toast.error('Export failed', err.message);
@@ -378,7 +378,7 @@ export default function Inventory() {
             message={
               search || activeFilters.length
                 ? 'Try a different search term or clear the filters.'
-                : 'Add your first material to start tracking what System Integration holds.'
+                : 'Add your first material to start tracking what R&D holds.'
             }
             action={
               search || activeFilters.length ? (

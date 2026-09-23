@@ -100,7 +100,7 @@ export default function Dashboard() {
           <h2 style={{ fontSize: 18, fontWeight: 700 }}>
             Good {hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'}, {user?.name?.split(' ')[0]}
           </h2>
-          <p className="muted small">Here is what the System Integration store is holding right now.</p>
+          <p className="muted small">Here is what the R&amp;D store is holding right now.</p>
         </div>
 
         <div className="flex">
