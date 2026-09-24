@@ -110,7 +110,7 @@ export default function Masters() {
                   width: '100%',
                   padding: '9px 11px',
                   border: 0,
-                  borderRadius: 'var(--radius-sm)',
+                  borderRadius: 0,
                   background: active === g.type ? 'var(--navy-50)' : 'none',
                   color: active === g.type ? 'var(--navy-800)' : 'var(--grey-600)',
                   fontWeight: active === g.type ? 700 : 500,

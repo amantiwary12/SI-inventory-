@@ -35,7 +35,7 @@ const SORTS = [
 export default function Inventory() {
   const navigate = useNavigate();
   const { canWrite, canManageInventory, isAdmin } = useAuth();
-  const { masters, customItemFields, labelFor } = useMeta();
+  const { masters, labelFor } = useMeta();
   const toast = useToast();
   const [params, setParams] = useSearchParams();
   const importRef = useRef(null);
@@ -185,17 +185,14 @@ export default function Inventory() {
     };
 
     const headers = splitLine(lines[0]);
-    const customLabels = new Map(customItemFields.map((f) => [f.label.toLowerCase(), f.key]));
 
     const rowsToSend = lines.slice(1).map((line) => {
       const cells = splitLine(line);
-      const row = { custom: {} };
+      const row = {};
       headers.forEach((h, i) => {
         const key = HEADER_MAP[h.toLowerCase()];
-        const customKey = customLabels.get(h.toLowerCase());
         const value = cells[i] ?? '';
         if (key) row[key] = value;
-        else if (customKey) row.custom[customKey] = value;
       });
       return row;
     });
@@ -211,8 +208,6 @@ export default function Inventory() {
       setBusy(false);
     }
   }
-
-  const extraCols = customItemFields.filter((f) => f.showInTable).slice(0, 3);
 
   return (
     <>
@@ -412,9 +407,6 @@ export default function Inventory() {
                     <th>{labelFor('condition', 'Condition')}</th>
                     <th>Status</th>
                     <th>{labelFor('location', 'Location')}</th>
-                    {extraCols.map((f) => (
-                      <th key={f.key}>{f.label}</th>
-                    ))}
                     <th style={{ width: 110 }} />
                   </tr>
                 </thead>
@@ -473,11 +465,6 @@ export default function Inventory() {
                           <div>{i.location || <span className="muted">—</span>}</div>
                           {i.rack ? <div className="cell-sub">Rack {i.rack}</div> : null}
                         </td>
-                        {extraCols.map((f) => (
-                          <td key={f.key}>
-                            {Array.isArray(i.custom?.[f.key]) ? i.custom[f.key].join(', ') : i.custom?.[f.key] || <span className="muted">—</span>}
-                          </td>
-                        ))}
                         <td onClick={(e) => e.stopPropagation()}>
                           <div className="actions">
                             {canWrite && i.active ? (

@@ -33,6 +33,8 @@ export default function Users() {
   const [confirm, setConfirm] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [selected, setSelected] = useState(() => new Set());
+  const [logConfirm, setLogConfirm] = useState(null);
 
   const load = useCallback(async (opts) => {
     if (opts?.silent !== true) setLoading(true);
@@ -43,6 +45,8 @@ export default function Users() {
       } else {
         const { data } = await api.get('/users/activity', { params: { limit: 100 } });
         setLogs(data.logs);
+        // Drop selections for entries that are gone (deleted elsewhere, or paged out).
+        setSelected((prev) => new Set(data.logs.filter((l) => prev.has(l._id)).map((l) => l._id)));
       }
     } catch (err) {
       toast.error('Could not load this page', err.message);
@@ -121,6 +125,35 @@ export default function Users() {
       load();
     } catch (err) {
       toast.error('Could not delete the account', err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function toggleLog(id) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  const allSelected = logs.length > 0 && logs.every((l) => selected.has(l._id));
+
+  async function removeLogs({ ids, all }) {
+    setBusy(true);
+    try {
+      const { data } =
+        ids?.length === 1
+          ? await api.delete(`/users/activity/${ids[0]}`)
+          : await api.delete('/users/activity', { data: all ? { all: true } : { ids } });
+      toast.success(all ? 'Audit trail cleared' : 'Deleted', data.message);
+      setLogConfirm(null);
+      setSelected(new Set());
+      load({ silent: true });
+    } catch (err) {
+      toast.error('Could not delete', err.message);
     } finally {
       setBusy(false);
     }
@@ -277,6 +310,36 @@ export default function Users() {
               <h3>Audit trail</h3>
               <p>Every create, update, delete and stock movement, most recent first.</p>
             </div>
+            {isAdmin && selected.size ? (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() =>
+                  setLogConfirm({
+                    ids: [...selected],
+                    title: `Delete ${selected.size} ${selected.size === 1 ? 'entry' : 'entries'}?`,
+                    message: 'The chosen entries will be removed from the audit trail and the overview feed. Stock and movements are not affected. This cannot be undone.',
+                    label: 'Delete',
+                  })
+                }
+              >
+                <Icon name="trash" size={14} /> Delete selected ({selected.size})
+              </button>
+            ) : null}
+            {isAdmin && logs.length ? (
+              <button
+                className="btn btn-ghost btn-sm"
+                onClick={() =>
+                  setLogConfirm({
+                    all: true,
+                    title: 'Clear the whole audit trail?',
+                    message: 'Every entry in the audit trail and the overview feed will be deleted, not just the ones shown here. Stock and movements are not affected. This cannot be undone.',
+                    label: 'Clear all',
+                  })
+                }
+              >
+                <Icon name="trash" size={14} /> Clear all
+              </button>
+            ) : null}
             <button className="btn btn-ghost btn-sm" onClick={load}>
               <Icon name="refresh" size={14} /> Refresh
             </button>
@@ -291,15 +354,31 @@ export default function Users() {
                 <table className="data">
                   <thead>
                     <tr>
+                      {isAdmin ? (
+                        <th style={{ width: 36 }}>
+                          <input
+                            type="checkbox"
+                            aria-label="Select all"
+                            checked={allSelected}
+                            onChange={() => setSelected(allSelected ? new Set() : new Set(logs.map((l) => l._id)))}
+                          />
+                        </th>
+                      ) : null}
                       <th>When</th>
                       <th>Who</th>
                       <th>Action</th>
                       <th>What happened</th>
+                      {isAdmin ? <th style={{ width: 50 }} /> : null}
                     </tr>
                   </thead>
                   <tbody>
                     {logs.map((l) => (
                       <tr key={l._id}>
+                        {isAdmin ? (
+                          <td>
+                            <input type="checkbox" aria-label="Select entry" checked={selected.has(l._id)} onChange={() => toggleLog(l._id)} />
+                          </td>
+                        ) : null}
                         <td className="nowrap small muted">{fmtDateTime(l.createdAt)}</td>
                         <td className="cell-main">{l.userName}</td>
                         <td>
@@ -308,6 +387,15 @@ export default function Users() {
                           </Badge>
                         </td>
                         <td>{l.summary}</td>
+                        {isAdmin ? (
+                          <td>
+                            <div className="actions">
+                              <button className="icon-btn danger" title="Delete entry" aria-label="Delete entry" disabled={busy} onClick={() => removeLogs({ ids: [l._id] })}>
+                                <Icon name="trash" size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        ) : null}
                       </tr>
                     ))}
                   </tbody>
@@ -445,6 +533,16 @@ export default function Users() {
         busy={busy}
         onClose={() => setConfirm(null)}
         onConfirm={() => remove(confirm.user)}
+      />
+
+      <Confirm
+        open={Boolean(logConfirm)}
+        title={logConfirm?.title}
+        message={logConfirm?.message}
+        confirmLabel={logConfirm?.label}
+        busy={busy}
+        onClose={() => setLogConfirm(null)}
+        onConfirm={() => removeLogs(logConfirm)}
       />
     </>
   );

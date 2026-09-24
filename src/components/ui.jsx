@@ -148,7 +148,6 @@ export const Loading = ({ label = 'Loading…' }) => (
 
 export const Empty = ({ icon = 'inbox', title, message, action }) => (
   <div className="empty">
-    <Icon name={icon} size={42} strokeWidth={1.5} />
     <h4>{title}</h4>
     {message ? <p>{message}</p> : null}
     {action}
@@ -166,7 +165,7 @@ export function Pagination({ page, pages, total, limit, onPage, onLimit }) {
         Showing <b>{from}</b>–<b>{to}</b> of <b>{fmtNum(total)}</b>
       </span>
       {onLimit ? (
-        <select className="select" style={{ width: 92 }} value={limit} onChange={(e) => onLimit(Number(e.target.value))}>
+        <select className="select" style={{ width: 108 }} value={limit} onChange={(e) => onLimit(Number(e.target.value))}>
           {[10, 25, 50, 100, 200].map((n) => (
             <option key={n} value={n}>
               {n} / page
@@ -191,12 +190,10 @@ export function StatCard({ label, value, sub, tone = '', icon }) {
   return (
     <div className={`stat ${tone}`}>
       <div className="label">
-        {icon ? <Icon name={icon} size={13} /> : null}
         {label}
       </div>
       <div className="value">{value}</div>
       {sub ? <div className="sub">{sub}</div> : null}
-      {icon ? <Icon name={icon} size={78} strokeWidth={1.2} className="ghost" /> : null}
     </div>
   );
 }

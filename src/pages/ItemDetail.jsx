@@ -27,7 +27,7 @@ export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { canWrite, canManageInventory } = useAuth();
-  const { customItemFields, labelFor } = useMeta();
+  const { labelFor } = useMeta();
   const toast = useToast();
   const attachRef = useRef(null);
 
@@ -139,11 +139,6 @@ export default function ItemDetail() {
     ['Last updated', fmtDateTime(item.updatedAt)],
   ];
 
-  const customRows = customItemFields.map((f) => [
-    f.label,
-    Array.isArray(item.custom?.[f.key]) ? item.custom[f.key].join(', ') : typeof item.custom?.[f.key] === 'boolean' ? (item.custom[f.key] ? 'Yes' : 'No') : item.custom?.[f.key],
-  ]);
-
   const Section = ({ title, rows }) => {
     const filled = rows.filter(([, v]) => v !== undefined && v !== null && v !== '');
     if (!filled.length) return null;
@@ -190,7 +185,7 @@ export default function ItemDetail() {
       <div className="card mb">
         <div className="card-body">
           <div className="flex" style={{ alignItems: 'flex-start', gap: 18, flexWrap: 'wrap' }}>
-            <div className="thumb" style={{ width: 96, height: 96, borderRadius: 'var(--radius)' }}>
+            <div className="thumb" style={{ width: 96, height: 96, borderRadius: 0 }}>
               {item.image?.url ? <img src={item.image.url} alt="" /> : <Icon name="box" size={32} strokeWidth={1.4} />}
             </div>
 
@@ -237,7 +232,6 @@ export default function ItemDetail() {
             <Section title="Identification & specification" rows={spec} />
             <Section title="Supply" rows={supply} />
             <Section title="Placement & ownership" rows={placement} />
-            {customRows.length ? <Section title="Custom fields" rows={customRows} /> : null}
 
             <div className="fieldset-title" style={{ marginTop: 4 }}>
               Documents
@@ -245,7 +239,7 @@ export default function ItemDetail() {
             {item.attachments?.length ? (
               <div style={{ display: 'grid', gap: 7, marginBottom: 12 }}>
                 {item.attachments.map((a) => (
-                  <div key={a._id} className="flex" style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '7px 10px' }}>
+                  <div key={a._id} className="flex" style={{ border: '1px solid var(--border)', borderRadius: 0, padding: '7px 10px' }}>
                     <Icon name="paperclip" size={14} style={{ color: 'var(--grey-400)' }} />
                     <a href={a.url} target="_blank" rel="noreferrer" style={{ flex: 1, fontSize: 12.5, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {a.name || 'Attachment'}

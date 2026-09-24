@@ -48,9 +48,9 @@
   --text: var(--navy-800);
   --text-muted: var(--grey-500);
 
-  --radius: 10px;
-  --radius-lg: 14px;
-  --radius-sm: 7px;
+  --radius: 0;
+  --radius-lg: 0;
+  --radius-sm: 0;
 
   --shadow-sm: 0 1px 2px rgba(16, 31, 73, 0.06);
   --shadow: 0 3px 12px rgba(16, 31, 73, 0.08);
@@ -100,7 +100,7 @@ a:hover {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--grey-300);
-  border-radius: 6px;
+  border-radius: 0;
   border: 2px solid var(--grey-100);
 }
 ::-webkit-scrollbar-thumb:hover {
@@ -139,7 +139,7 @@ a:hover {
 .brand-mark {
   width: 40px;
   height: 40px;
-  border-radius: 9px;
+  border-radius: 0;
   background: var(--navy-700);
   display: flex;
   flex-direction: column;
@@ -153,7 +153,7 @@ a:hover {
   display: block;
   height: 3px;
   width: 20px;
-  border-radius: 2px;
+  border-radius: 0;
   background: var(--white);
 }
 .brand-mark span:last-child {
@@ -211,7 +211,7 @@ a:hover {
   align-items: center;
   gap: 11px;
   padding: 9.5px 12px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   color: rgba(255, 255, 255, 0.76);
   font-size: 13.5px;
   font-weight: 500;
@@ -235,7 +235,7 @@ a:hover {
   top: 7px;
   bottom: 7px;
   width: 3.5px;
-  border-radius: 0 3px 3px 0;
+  border-radius: 0;
   background: var(--red-500);
 }
 .nav-item svg {
@@ -249,7 +249,7 @@ a:hover {
   font-size: 10.5px;
   font-weight: 700;
   padding: 1px 6px;
-  border-radius: 20px;
+  border-radius: 0;
   min-width: 19px;
   text-align: center;
 }
@@ -349,7 +349,7 @@ a:hover {
   align-items: center;
   gap: 9px;
   padding: 5px 10px 5px 5px;
-  border-radius: 30px;
+  border-radius: 0;
   border: 1px solid var(--border);
   background: var(--white);
   cursor: pointer;
@@ -362,7 +362,7 @@ a:hover {
 .avatar {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--navy-700);
   color: #fff;
   display: grid;
@@ -406,7 +406,7 @@ a:hover {
   min-width: 208px;
   background: var(--white);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   padding: 6px;
   z-index: 70;
@@ -420,7 +420,7 @@ a:hover {
   padding: 8px 10px;
   border: 0;
   background: none;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   font: inherit;
   font-size: 13px;
   color: var(--text);
@@ -448,7 +448,7 @@ a:hover {
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   box-shadow: var(--shadow-sm);
 }
 
@@ -497,7 +497,7 @@ a:hover {
   background: var(--surface);
   border: 1px solid var(--border);
   border-left: 4px solid var(--navy-600);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   padding: 15px 17px;
   box-shadow: var(--shadow-sm);
   position: relative;
@@ -554,7 +554,7 @@ a:hover {
   justify-content: center;
   gap: 7px;
   padding: 8.5px 15px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   border: 1px solid transparent;
   font-family: var(--font);
   font-size: 13px;
@@ -618,9 +618,10 @@ a:hover {
 }
 
 .icon-btn {
-  width: 30px;
+  min-width: 30px;
   height: 30px;
-  border-radius: var(--radius-sm);
+  padding: 0 8px;
+  border-radius: 0;
   border: 1px solid var(--border);
   background: var(--white);
   color: var(--grey-600);
@@ -675,7 +676,7 @@ a:hover {
   width: 100%;
   padding: 9px 11px;
   border: 1px solid var(--grey-300);
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   font-family: var(--font);
   font-size: 13.5px;
   color: var(--text);
@@ -700,9 +701,11 @@ a:hover {
 }
 .select {
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b768f' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  /* a plain CSS caret — two half-filled squares, no image */
+  background-image: linear-gradient(45deg, transparent 50%, var(--grey-500) 50%), linear-gradient(135deg, var(--grey-500) 50%, transparent 50%);
   background-repeat: no-repeat;
-  background-position: right 11px center;
+  background-position: calc(100% - 16px) center, calc(100% - 11px) center;
+  background-size: 5px 5px;
   padding-right: 30px;
 }
 
@@ -752,7 +755,7 @@ a:hover {
   width: 3px;
   height: 13px;
   background: var(--red-600);
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 /* ================= table ================= */
@@ -810,7 +813,7 @@ table.data .cell-main {
   font-weight: 600;
   color: var(--navy-800);
 }
-table.data .cell-sub {
+.cell-sub {
   font-size: 11px;
   color: var(--text-muted);
 }
@@ -823,7 +826,7 @@ table.data .actions {
 .thumb {
   width: 34px;
   height: 34px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   object-fit: cover;
   border: 1px solid var(--border);
   background: var(--grey-50);
@@ -846,7 +849,7 @@ table.data .actions {
   align-items: center;
   gap: 4px;
   padding: 2.5px 9px;
-  border-radius: 20px;
+  border-radius: 0;
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
@@ -880,7 +883,7 @@ table.data .actions {
   content: '';
   width: 5px;
   height: 5px;
-  border-radius: 50%;
+  border-radius: 0;
   background: currentColor;
 }
 
@@ -923,7 +926,7 @@ table.data .actions {
   padding: 14px 16px;
   background: var(--navy-50);
   border: 1px solid var(--navy-100);
-  border-radius: var(--radius);
+  border-radius: 0;
   margin-bottom: 16px;
 }
 .filter-bar .field {
@@ -941,7 +944,7 @@ table.data .actions {
   align-items: center;
   gap: 6px;
   padding: 4px 9px;
-  border-radius: 20px;
+  border-radius: 0;
   background: var(--white);
   border: 1px solid var(--navy-100);
   font-size: 11.5px;
@@ -1012,7 +1015,7 @@ table.data .actions {
 
 .modal {
   background: var(--white);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 620px;
@@ -1062,7 +1065,7 @@ table.data .actions {
   gap: 10px;
   justify-content: flex-end;
   background: var(--grey-50);
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  border-radius: 0;
   flex-wrap: wrap;
 }
 
@@ -1082,7 +1085,7 @@ table.data .actions {
   background: var(--white);
   border: 1px solid var(--border);
   border-left: 4px solid var(--navy-600);
-  border-radius: var(--radius);
+  border-radius: 0;
   box-shadow: var(--shadow-lg);
   padding: 11px 14px;
   display: flex;
@@ -1192,14 +1195,14 @@ table.data .actions {
 .progress {
   height: 5px;
   background: var(--grey-200);
-  border-radius: 4px;
+  border-radius: 0;
   overflow: hidden;
 }
 .progress span {
   display: block;
   height: 100%;
   background: var(--navy-600);
-  border-radius: 4px;
+  border-radius: 0;
 }
 .progress span.low {
   background: var(--red-600);
@@ -1281,7 +1284,7 @@ hr.sep {
 .auth-art::after {
   content: '';
   position: absolute;
-  border-radius: 50%;
+  border-radius: 0;
 }
 .auth-art::before {
   width: 420px;
@@ -1341,7 +1344,7 @@ hr.sep {
 .auth-art li i {
   width: 21px;
   height: 21px;
-  border-radius: 5px;
+  border-radius: 0;
   background: var(--red-600);
   display: grid;
   place-items: center;
@@ -1396,7 +1399,7 @@ hr.sep {
 
 .alert {
   padding: 10px 13px;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   font-size: 12.5px;
   margin-bottom: 15px;
   border: 1px solid;
@@ -1454,13 +1457,13 @@ hr.sep {
   grid-column: 1 / -1;
   height: 6px;
   background: var(--grey-100);
-  border-radius: 3px;
+  border-radius: 0;
   overflow: hidden;
 }
 .breakdown-row .bar span {
   display: block;
   height: 100%;
-  border-radius: 3px;
+  border-radius: 0;
   background: var(--navy-500);
   min-width: 3px;
 }
@@ -1495,7 +1498,7 @@ hr.sep {
   padding: 14px;
   background: var(--white);
   border: 3px solid var(--navy-800);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
 }
 
 .qr-frame img {
@@ -1639,7 +1642,7 @@ hr.sep {
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
   background: rgba(255, 255, 255, 0.12);
   color: var(--white);
   cursor: pointer;
@@ -1685,7 +1688,7 @@ hr.sep {
   width: 100%;
   padding: 22px 18px;
   border: 2px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   background: var(--white);
   text-align: left;
   cursor: pointer;
@@ -1768,7 +1771,7 @@ hr.sep {
   flex: 1;
   min-width: 0;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   padding: 12px 13px;
   font: inherit;
   font-size: 15px; /* 16px-ish stops iOS zooming on focus */
@@ -1811,7 +1814,7 @@ hr.sep {
   flex: none;
   padding: 7px 14px;
   border: 1.5px solid var(--border);
-  border-radius: 999px;
+  border-radius: 0;
   background: var(--white);
   color: var(--grey-600);
   font: inherit;
@@ -1834,7 +1837,7 @@ hr.sep {
   padding: 14px;
   background: var(--white);
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
 }
 
 .scan-item.picked {
@@ -1887,7 +1890,7 @@ hr.sep {
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--navy-800);
   color: var(--white);
   cursor: pointer;
@@ -1904,7 +1907,7 @@ hr.sep {
   gap: 2px;
   background: var(--white);
   border: 1.5px solid var(--navy-800);
-  border-radius: 999px;
+  border-radius: 0;
   padding: 3px;
 }
 
@@ -1914,7 +1917,7 @@ hr.sep {
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--navy-800);
   color: var(--white);
   cursor: pointer;
@@ -2004,7 +2007,7 @@ hr.sep {
   width: 100%;
   padding: 13px;
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   font: inherit;
   font-size: 15px;
   background: var(--white);
@@ -2045,7 +2048,7 @@ hr.sep {
   padding: 13px 15px;
   background: var(--white);
   border: 1.5px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: 0;
   font-size: 13.5px;
 }
 
@@ -2092,7 +2095,7 @@ hr.sep {
   gap: 8px;
   padding: 14px 22px;
   border: 0;
-  border-radius: var(--radius);
+  border-radius: 0;
   background: var(--red-600);
   color: var(--white);
   font: inherit;
@@ -2128,7 +2131,7 @@ hr.sep {
 
 .scan-alert {
   padding: 12px 14px;
-  border-radius: var(--radius);
+  border-radius: 0;
   font-size: 13.5px;
   line-height: 1.6;
 }
@@ -2159,7 +2162,7 @@ hr.sep {
   height: 76px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: 0;
   background: var(--green-100);
   color: var(--green-600);
 }
@@ -2178,7 +2181,7 @@ hr.sep {
 .scan-code {
   width: 100%;
   padding: 16px;
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   background: var(--navy-800);
   color: var(--white);
 }
@@ -2221,7 +2224,7 @@ hr.sep {
   .scan-shell {
     min-height: auto;
     margin: 28px 0;
-    border-radius: var(--radius-lg);
+    border-radius: 0;
     overflow: hidden;
   }
   .scan-bar {
@@ -2258,4 +2261,19 @@ hr.sep {
   .scan-bar {
     padding-bottom: calc(14px + env(safe-area-inset-bottom));
   }
+}
+
+/* Icons are text now: a button whose only child was a pictogram shows its label instead. */
+button:empty::before {
+  content: attr(aria-label);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.icon-glyph {
+  display: inline-block;
+  line-height: 1;
+  text-align: center;
+  font-style: normal;
+  flex-shrink: 0;
 }

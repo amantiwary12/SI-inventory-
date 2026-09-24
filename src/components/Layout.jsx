@@ -15,7 +15,6 @@ const TITLES = {
   '/self-service': ['QR Self-Service', 'The store QR code, and what people took by scanning it'],
   '/reports': ['Reports', 'Movement log, department usage and exports'],
   '/masters': ['Master Lists', 'Categories, locations, departments, vendors and units'],
-  '/fields': ['Custom Fields', 'Add or remove any material attribute'],
   '/users': ['Users & Roles', 'Team access and the audit trail'],
   '/settings': ['Settings', 'Profile, password and module switches'],
 };
@@ -141,7 +140,7 @@ export default function Layout() {
               color: connected ? 'var(--green-600)' : 'var(--grey-400)',
             }}
           >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'currentColor' }} />
+            <span style={{ width: 8, height: 8, borderRadius: 0, background: 'currentColor' }} />
             {connected ? 'Live' : 'Offline'}
           </span>
 

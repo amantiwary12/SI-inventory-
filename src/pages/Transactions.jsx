@@ -343,7 +343,13 @@ export default function Transactions() {
                                   setConfirmDel({
                                     txn: t,
                                     title: `Reverse ${t.txnNumber}?`,
-                                    message: `The quantity effect of this ${t.type.toLowerCase()} (${fmtNum(t.quantity)} ${t.unit} of ${t.itemNameSnapshot}) will be undone and the entry deleted. This cannot be undone.`,
+                                    message: `The quantity effect of this ${t.type.toLowerCase()} (${fmtNum(t.quantity)} ${t.unit} of ${t.itemNameSnapshot}) will be undone and the entry deleted.${
+                                      t.type === 'ISSUE' && t.returnedQuantity > 0
+                                        ? ` The ${fmtNum(t.returnedQuantity)} ${t.unit} already returned against it will be deleted too.`
+                                        : t.type === 'RETURN'
+                                          ? ' The quantity goes back to pending on the issue it was returned against.'
+                                          : ''
+                                    } This cannot be undone.`,
                                   })
                                 }
                               >

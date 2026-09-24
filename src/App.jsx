@@ -16,7 +16,6 @@ const Transactions = lazy(() => import('./pages/Transactions.jsx'));
 const Returns = lazy(() => import('./pages/Returns.jsx'));
 const Reports = lazy(() => import('./pages/Reports.jsx'));
 const Masters = lazy(() => import('./pages/Masters.jsx'));
-const Fields = lazy(() => import('./pages/Fields.jsx'));
 const Users = lazy(() => import('./pages/Users.jsx'));
 const Settings = lazy(() => import('./pages/Settings.jsx'));
 const Scan = lazy(() => import('./pages/Scan.jsx'));
@@ -70,14 +69,6 @@ export default function App() {
           />
           <Route path="/reports" element={<Reports />} />
           <Route path="/masters" element={<Masters />} />
-          <Route
-            path="/fields"
-            element={
-              <RoleGate allow={['admin', 'manager']}>
-                <Fields />
-              </RoleGate>
-            }
-          />
           <Route
             path="/users"
             element={

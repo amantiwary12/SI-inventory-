@@ -10,7 +10,6 @@ const LABELS = {
   items: 'a material',
   transactions: 'an issue / receive entry',
   masters: 'a master list entry',
-  fields: 'a custom field',
   modules: 'a sidebar module',
   users: 'a user account',
   // Nobody is signed in behind a QR scan, so it arrives as a whole-app refresh.

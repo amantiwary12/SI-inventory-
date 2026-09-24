@@ -61,6 +61,19 @@ export default function Settings() {
     }
   }
 
+  async function removeAvatar() {
+    setBusy(true);
+    try {
+      const { data } = await api.delete('/auth/me/avatar');
+      setUser(data.user);
+      toast.success('Photo removed');
+    } catch (err) {
+      toast.error('Could not remove the photo', err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function changePassword(e) {
     e.preventDefault();
     setError('');
@@ -156,8 +169,13 @@ export default function Settings() {
               <span className="avatar lg">{user?.avatar?.url ? <img src={user.avatar.url} alt="" /> : initials(user?.name)}</span>
               <div>
                 <button className="btn btn-ghost btn-sm" onClick={() => avatarRef.current?.click()} disabled={busy}>
-                  <Icon name="upload" size={14} /> Change photo
+                  <Icon name="upload" size={14} /> {user?.avatar?.url ? 'Change photo' : 'Add photo'}
                 </button>
+                {user?.avatar?.url ? (
+                  <button className="btn btn-ghost btn-sm" style={{ marginLeft: 8 }} onClick={removeAvatar} disabled={busy}>
+                    Remove photo
+                  </button>
+                ) : null}
                 <div className="hint" style={{ marginTop: 5 }}>
                   {user?.email} · <Badge tone="navy">{user?.role}</Badge>
                 </div>
@@ -265,19 +283,7 @@ export default function Settings() {
               <div key={m._id} className="card">
                 <div className="card-body">
                   <div className="flex-between" style={{ marginBottom: 8 }}>
-                    <span
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: 8,
-                        background: m.enabled ? 'var(--navy-50)' : 'var(--grey-100)',
-                        color: m.enabled ? 'var(--navy-600)' : 'var(--grey-400)',
-                        display: 'grid',
-                        placeItems: 'center',
-                      }}
-                    >
-                      <Icon name={m.icon} size={17} />
-                    </span>
+                    <span />
                     <div className="flex" style={{ gap: 6 }}>
                       {m.isCore ? <Badge tone="navy">Core</Badge> : null}
                       <Badge tone={m.enabled ? 'green' : 'grey'} dot>
@@ -345,7 +351,7 @@ export default function Settings() {
               <dd>React + Vite frontend, Node.js + Express API, MongoDB, Cloudinary for images, Brevo for email.</dd>
               <dt>Extending it</dt>
               <dd>
-                Add fields under <b>Custom Fields</b>, dropdown values under <b>Master Lists</b>, and new tools under{' '}
+                Add dropdown values under <b>Master Lists</b> and new tools under{' '}
                 <b>Modules &amp; tools</b> — all without a code change.
               </dd>
             </dl>

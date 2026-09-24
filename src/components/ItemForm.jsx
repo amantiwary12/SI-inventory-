@@ -12,13 +12,11 @@ const BLANK = {
   quantity: '', unit: 'Nos', condition: 'New', reorderLevel: '',
   vendor: '', poNumber: '', invoiceNumber: '', purchaseDate: '', warrantyExpiry: '',
   location: '', rack: '', ownerDepartment: 'System Integration', project: '', source: '', remarks: '',
-  custom: {},
 };
 
 /**
- * Add / edit a material. Every input on this form comes from a FieldDef, so
- * whatever the team adds under Custom Fields appears here automatically and
- * whatever they hide disappears.
+ * Add / edit a material. Every input on this form comes from a built-in FieldDef,
+ * grouped and ordered as stored.
  */
 export default function ItemForm({ open, item, onClose, onSaved }) {
   const { itemFields, optionsFor, refresh } = useMeta();
@@ -41,15 +39,13 @@ export default function ItemForm({ open, item, onClose, onSaved }) {
     if (item) {
       const next = { ...BLANK };
       Object.keys(BLANK).forEach((k) => {
-        if (k === 'custom') return;
         const v = item[k];
         next[k] = v === undefined || v === null ? '' : k.includes('Date') || k === 'warrantyExpiry' ? String(v).slice(0, 10) : v;
       });
-      next.custom = { ...(item.custom || {}) };
       setForm(next);
       setPreview(item.image?.url || '');
     } else {
-      setForm({ ...BLANK, custom: {} });
+      setForm({ ...BLANK });
       setPreview('');
     }
   }, [open, item]);
@@ -69,12 +65,9 @@ export default function ItemForm({ open, item, onClose, onSaved }) {
     return out;
   }, [itemFields]);
 
-  const setValue = (def) => (value) => {
-    if (def.isSystem) setForm((f) => ({ ...f, [def.key]: value }));
-    else setForm((f) => ({ ...f, custom: { ...f.custom, [def.key]: value } }));
-  };
+  const setValue = (def) => (value) => setForm((f) => ({ ...f, [def.key]: value }));
 
-  const valueOf = (def) => (def.isSystem ? form[def.key] : form.custom?.[def.key]);
+  const valueOf = (def) => form[def.key];
 
   function pickImage(e) {
     const file = e.target.files?.[0];
@@ -153,7 +146,7 @@ export default function ItemForm({ open, item, onClose, onSaved }) {
         <div className="flex mb" style={{ alignItems: 'flex-start', gap: 16 }}>
           <div
             className="thumb"
-            style={{ width: 82, height: 82, borderRadius: 'var(--radius)', cursor: 'pointer' }}
+            style={{ width: 82, height: 82, borderRadius: 0, cursor: 'pointer' }}
             onClick={() => fileRef.current?.click()}
             title="Click to choose a photo"
           >

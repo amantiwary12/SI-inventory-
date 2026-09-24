@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import api from '../api/client.js';
-import DynamicField from './DynamicField.jsx';
 import Icon from './Icon.jsx';
 import { Modal, availableOf, fmtNum } from './ui.jsx';
 import { useMeta } from '../context/MetaContext.jsx';
@@ -29,7 +28,7 @@ const blankParty = () => ({ name: '', kind: 'Employee', department: '', employee
  * individual without needing a master record for each one first.
  */
 export default function IssueForm({ open, item, presetType = 'ISSUE', onClose, onSaved }) {
-  const { masters, customTxnFields, optionsFor } = useMeta();
+  const { masters } = useMeta();
   const toast = useToast();
 
   const [type, setType] = useState(presetType);
@@ -40,7 +39,6 @@ export default function IssueForm({ open, item, presetType = 'ISSUE', onClose, o
   });
   const [from, setFrom] = useState(blankParty());
   const [to, setTo] = useState(blankParty());
-  const [custom, setCustom] = useState({});
   const [people, setPeople] = useState([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -52,7 +50,6 @@ export default function IssueForm({ open, item, presetType = 'ISSUE', onClose, o
     if (!open) return;
     setType(presetType);
     setError('');
-    setCustom({});
     setMoreOpen(false);
     setForm({
       quantity: '', condition: item?.condition || 'Good', date: new Date().toISOString().slice(0, 10),
@@ -121,7 +118,6 @@ export default function IssueForm({ open, item, presetType = 'ISSUE', onClose, o
         remarks: form.remarks,
         returnable: type === 'ISSUE' ? form.returnable : false,
         expectedReturnDate: form.returnable ? form.expectedReturnDate : undefined,
-        custom,
       });
 
       toast.success(`${cfg.label} recorded`, `${data.transaction.txnNumber} · ${fmtNum(qty)} ${item.unit} of ${item.name}`);
@@ -399,22 +395,6 @@ export default function IssueForm({ open, item, presetType = 'ISSUE', onClose, o
               </div>
             </div>
           </>
-        ) : null}
-
-        {customTxnFields.length ? (
-          <div className="form-grid">
-            <div className="fieldset-title">Additional details</div>
-            {customTxnFields.map((def) => (
-              <DynamicField
-                key={def.key}
-                def={def}
-                value={custom[def.key]}
-                onChange={(v) => setCustom((c) => ({ ...c, [def.key]: v }))}
-                options={def.type === 'select' && def.isSystem ? optionsFor(def.key) : undefined}
-                disabled={busy}
-              />
-            ))}
-          </div>
         ) : null}
       </form>
     </Modal>

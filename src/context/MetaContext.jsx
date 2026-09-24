@@ -76,8 +76,6 @@ export function MetaProvider({ children }) {
       optionsFor,
       itemFields: fields.filter((f) => f.scope === 'item'),
       txnFields: fields.filter((f) => f.scope === 'transaction'),
-      customItemFields: fields.filter((f) => f.scope === 'item' && !f.isSystem && f.visible),
-      customTxnFields: fields.filter((f) => f.scope === 'transaction' && !f.isSystem && f.visible),
       /** Is this built-in attribute switched on? Unknown keys default to visible. */
       isVisible: (key, scope = 'item') => {
         const def = fields.find((f) => f.scope === scope && f.key === key);

@@ -14,6 +14,7 @@ import {
   fmtNum,
 } from '../components/ui.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useToast } from '../context/ToastContext.jsx';
 import { useLiveUpdates } from '../context/SocketContext.jsx';
 
 /** A plain count-per-row list with a proportional bar — no chart library. */
@@ -50,7 +51,8 @@ const CONDITION_BAR = {
 };
 
 export default function Dashboard() {
-  const { user, canWrite } = useAuth();
+  const { user, canWrite, isAdmin } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
@@ -70,6 +72,15 @@ export default function Dashboard() {
   }, [load]);
 
   useLiveUpdates(['items', 'transactions', 'masters', 'users'], () => load());
+
+  async function removeActivity(id) {
+    try {
+      await api.delete(`/users/activity/${id}`);
+      setData((d) => ({ ...d, activity: d.activity.filter((a) => a._id !== id) }));
+    } catch (err) {
+      toast.error('Could not delete this entry', err.message);
+    }
+  }
 
   if (error) {
     return (
@@ -363,33 +374,17 @@ export default function Dashboard() {
               <div style={{ display: 'grid', gap: 11 }}>
                 {activity.slice(0, 9).map((a) => (
                   <div key={a._id} className="flex" style={{ alignItems: 'flex-start' }}>
-                    <span
-                      style={{
-                        width: 27,
-                        height: 27,
-                        borderRadius: 7,
-                        background: 'var(--navy-50)',
-                        color: 'var(--navy-600)',
-                        display: 'grid',
-                        placeItems: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Icon
-                        name={
-                          { create: 'plus', update: 'edit', delete: 'trash', archive: 'archive', issue: 'arrow-up', receive: 'arrow-down', return: 'undo', login: 'user' }[
-                            a.action
-                          ] || 'activity'
-                        }
-                        size={13}
-                      />
-                    </span>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontSize: 13 }}>{a.summary}</div>
                       <div className="cell-sub">
                         {a.userName} · {fmtAgo(a.createdAt)}
                       </div>
                     </div>
+                    {isAdmin ? (
+                      <button className="icon-btn danger" title="Delete entry" aria-label="Delete entry" onClick={() => removeActivity(a._id)}>
+                        <Icon name="x" size={13} />
+                      </button>
+                    ) : null}
                   </div>
                 ))}
               </div>

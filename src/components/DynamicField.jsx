@@ -76,7 +76,7 @@ export default function DynamicField({ def, value, onChange, options, error, dis
         <div
           style={{
             border: `1px solid ${error ? 'var(--red-500)' : 'var(--grey-300)'}`,
-            borderRadius: 'var(--radius-sm)',
+            borderRadius: 0,
             padding: '8px 10px',
             maxHeight: 148,
             overflowY: 'auto',
